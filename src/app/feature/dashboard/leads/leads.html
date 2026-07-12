@@ -1,0 +1,209 @@
+<section class="view" id="view-leads">
+  <div class="toolbar">
+    <div class="toolbar-left">
+      <div class="search-box">
+        <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 10-.7.7l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0A4.5 4.5 0 1114 9.5 4.5 4.5 0 019.5 14z"></path></svg>
+        <input type="text" id="lead-search" class="ring-0" placeholder="Search leads by name, phone…"
+               [(ngModel)]="queryFilters.search" (input)="onFilterChange()">
+      </div>
+
+   <select id="lead-stage-filter" class="select-filter"
+        [(ngModel)]="queryFilters.status" (change)="onFilterChange()">
+  <option [ngValue]="null">All Stages</option>
+  @for (status of statuses(); track status.value) {
+    <option [ngValue]="status.value">{{status.label}}</option>
+  }
+</select>
+
+<select id="lead-source-filter" class="select-filter"
+        [(ngModel)]="queryFilters.source" (change)="onFilterChange()">
+  <option [ngValue]="null">All Sources</option>
+  @for (source of sources(); track source.value) {
+    <option [ngValue]="source.value">{{source.label}}</option>
+  }
+</select>
+    </div>
+
+    <div class="toolbar-right">
+      <button class="btn btn-primary" id="add-lead-btn" (click)="openAddModal()">+ Add Lead</button>
+    </div>
+  </div>
+
+  <div id="leads-table-wrap">
+    <div class="table-card">
+      <table class="data-table" id="leads-table">
+        <thead>
+          <tr>
+            <th>Lead</th><th>Phone</th><th>Source</th><th>Budget</th><th>Stage</th><th>Owner</th><th>Updated</th><th></th>
+          </tr>
+        </thead>
+        <tbody id="leads-tbody">
+          @for (lead of leads(); track lead.id) {
+            <tr [attr.data-id]="lead.id"  (click)="viewLead(lead.id)">
+              <td>
+                <div class="cell-primary">{{lead.fullName || "-"}}</div>
+                <div class="cell-sub">{{lead.propertyTypeName || "-"}}</div>
+              </td>
+              <td>{{lead.phone}}</td>
+              <td>{{lead.sourceLabel}}</td>
+              <td class="cell-mono">{{lead.budget ? (lead.budget | shortCurrencyPipe) : '-'}}</td>
+              <td>
+                <span class="status-pill"
+                      [style.background]="'color-mix(in srgb, ' + getStatusColor(lead.status) + ' 16%, transparent)'"
+                      [style.color]="getStatusColor(lead.status)">
+                  {{lead.statusLabel}}
+                </span>
+              </td>
+              <td>
+                <div class="owner-cell">
+                  <div class="mini-avatar">{{ lead?.ownerName || "-" | nameavtar}}</div>
+                  <span>{{lead.ownerName || "-"}}</span>
+                </div>
+              </td>
+              <td class="cell-sub">{{ lead?.updatedAt || lead?.createdAt | timeago }}</td>
+              <td>
+                <div class="row-actions">
+                  <button class="icon-btn" data-action="view-lead" [attr.data-id]="lead.id" title="View" (click)="$event.stopPropagation(); viewLead(lead.id)">
+                    <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.7 7.6 1 12c1.7 4.4 6 7.5 11 7.5s9.3-3.1 11-7.5c-1.7-4.4-6-7.5-11-7.5zm0 12.5a5 5 0 110-10 5 5 0 010 10zm0-8a3 3 0 100 6 3 3 0 000-6z"></path></svg>
+                  </button>
+                  <button class="icon-btn" (click)="$event.stopPropagation(); openEditModal(lead.id)" data-action="edit-lead" [attr.data-id]="lead.id" title="Edit">
+                    <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 000-1.41l-2.34-2.34a1 1 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"></path></svg>
+                  </button>
+                  <button class="icon-btn danger" data-action="delete-lead" [attr.data-id]="lead.id" title="Delete" (click)="$event.stopPropagation(); opendeleteModal(lead.id)">
+                    <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8a2 2 0 002-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        @empty {
+  <tr class="empty-row">
+    <td colspan="8">
+      <div class="empty-state">
+        <div class="empty-state-title">No leads match your filters</div>
+        <div class="empty-state-sub">Try adjusting search or filter criteria.</div>
+      </div>
+    </td>
+  </tr>
+}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  @if (totalPages() > 0) {
+    <div class="pagination-bar">
+     <div class="pagination-info">
+  Page {{queryFilters.pageNumber}} of {{totalPages()}} — {{totalCount()}} total leads
+</div>
+
+      <div class="pagination-controls">
+        <select class="select-filter page-size-select"
+                [(ngModel)]="queryFilters.pageSize"
+                (change)="onPageSizeChange()">
+          <option [ngValue]="10">10 / صفحة</option>
+          <option [ngValue]="25">25 / صفحة</option>
+          <option [ngValue]="50">50 / صفحة</option>
+        </select>
+
+        <button class="icon-btn" [disabled]="queryFilters.pageNumber === 1" (click)="prevPage()">
+          <svg viewBox="0 0 24 24"><path d="M15.5 5L8.5 12l7 7"></path></svg>
+        </button>
+
+        @for (page of pagesArray(); track page) {
+          <button class="page-btn" [class.active]="page === queryFilters.pageNumber"
+                  (click)="goToPage(page)">
+            {{page}}
+          </button>
+        }
+
+        <button class="icon-btn" [disabled]="queryFilters.pageNumber === totalPages()" (click)="nextPage()">
+          <svg viewBox="0 0 24 24"><path d="M8.5 5l7 7-7 7"></path></svg>
+        </button>
+      </div>
+    </div>
+  }
+</section>
+
+@if (isModalOpen()) {
+  <component-leadmodal 
+    [leadid]="editingLeadId()"
+    (onClose)="closeModal()"></component-leadmodal>
+}
+
+@if (isDeleteModalOpen()) {
+  <div class="modal-overlay" id="modal-overlay" (click)="closeDeleteModal()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <div class="modal-head">
+        <h2>Delete Lead</h2>
+        <button class="modal-close" (click)="closeDeleteModal()">
+          <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to delete this lead? This action can't be undone.</p>
+     
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-ghost" id="del-cancel" (click)="closeDeleteModal()" [disabled]="isDeleting()">Cancel</button>
+        <button class="btn btn-danger" id="del-confirm" (click)="confirmDelete()" [disabled]="isDeleting()">
+          {{ isDeleting() ? 'Deleting…' : 'Delete Lead' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+@if(isShowleadView() && selectedLead(); as lead) {
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal-card">
+    <div class="modal-head">
+      <h2>{{ lead.fullName || '-' }}</h2>
+      <button class="modal-close" (click)="closeLeadView()">
+        <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <span class="status-pill"
+            [style.background]="'color-mix(in srgb, ' + getStatusColor(lead.status) + ' 16%, transparent)'"
+            [style.color]="getStatusColor(lead.status)"
+            style="margin-bottom:16px;">
+        {{ lead.statusLabel }}
+      </span>
+
+      <div class="detail-section">
+        <h4>Contact Info</h4>
+        <div class="detail-row"><span class="dlabel">Phone</span><span class="dval">{{ lead.phone }}</span></div>
+        <div class="detail-row"><span class="dlabel">Source</span><span class="dval">{{ lead.sourceLabel || "-"}}</span></div>
+      </div>
+
+      <div class="detail-section">
+        <h4>Property Interest</h4>
+        <div class="detail-row"><span class="dlabel">Type</span><span class="dval">{{ lead.propertyTypeName || '-' }}</span></div>
+        <div class="detail-row"><span class="dlabel">Budget</span><span class="dval">{{ lead.budget !== null ? (lead.budget | shortCurrencyPipe) : '–' }}</span></div>
+      </div>
+
+      <div class="detail-section">
+        <h4>Ownership</h4>
+        <div class="detail-row"><span class="dlabel">Owner</span><span class="dval">{{ lead.ownerName || '-' }}</span></div>
+        <div class="detail-row"><span class="dlabel">Created</span><span class="dval">{{ lead.createdAt | timeago }}</span></div>
+        <div class="detail-row"><span class="dlabel">Updated</span><span class="dval">{{ lead.updatedAt ? (lead.updatedAt | timeago) : '–' }}</span></div>
+        <div class="detail-row"><span class="dlabel">Converted</span><span class="dval">{{ lead.isConverted ? 'Yes' : 'No' }}</span></div>
+      </div>
+
+      <div class="detail-section">
+        <h4>Notes</h4>
+        <p style="font-size:13.5px;color:var(--text-secondary);line-height:1.5;">{{ lead.notes || 'No notes added.' }}</p>
+      </div>
+           <div class="detail-section">
+        <h4>Related Tasks (0)</h4>
+        <p style="font-size:13.5px;color:var(--text-secondary);line-height:1.5;">{{ lead.notes || 'No tasks linked yet..' }}</p>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" id="detail-close" (click)="closeLeadView()">Close</button>
+      <button class="btn btn-primary" id="detail-edit" (click)="editFromView()">Edit Lead</button>
+    </div>
+  </div>
+</div>
+}
+

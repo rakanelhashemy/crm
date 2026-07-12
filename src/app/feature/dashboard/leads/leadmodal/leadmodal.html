@@ -1,0 +1,109 @@
+<div class="modal-overlay" id="modal-overlay" (click)="close()">
+ 
+  <div class="modal-card" (click)="$event.stopPropagation()">
+ 
+    <div class="modal-head">
+      <h2>{{ isEditMode() ? 'Edit Lead' : 'Add New Lead' }}</h2>
+      <button class="modal-close" (click)="close()">
+        <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+      </button>
+    </div>
+ 
+    <div class="modal-body">
+      <form id="lead-form" [formGroup]="form" (ngSubmit)="save()">
+        <div class="form-grid">
+ 
+          <label class="field">
+            <span>Full Name</span>
+            <input type="text" id="lf-name" placeholder="Enter Your Name" formControlName="fullName">
+          </label>
+ 
+          <label class="field">
+            <span>Phone </span>
+            <input type="tel" id="lf-phone" placeholder="Enter Phone Number" formControlName="phone">
+            @if (form.get('phone')?.invalid && form.get('phone')?.touched) {
+              <small class="field-error">
+                @if (form.get('phone')?.errors?.['required']) {
+                  Phone number is required.
+                } @else if (form.get('phone')?.errors?.['pattern']) {
+                  Enter a valid phone number.
+                }
+              </small>
+            }
+          </label>
+ 
+          <label class="field">
+            <span>Source </span>
+            <select id="lf-source" formControlName="source">
+              <option [ngValue]="null" disabled>Select source</option>
+              @for (source of sources(); track source.value) {
+                <option [ngValue]="source.value">{{ source.label }}</option>
+              }
+            </select>
+            @if (form.get('source')?.invalid && form.get('source')?.touched) {
+              <small class="field-error">Source is required.</small>
+            }
+          </label>
+ 
+          <label class="field">
+            <span>Property Type </span>
+            <select id="lf-ptype" formControlName="propertyType">
+              <option [ngValue]="null" disabled>select property type</option>
+              @for (pt of propertyTypes(); track pt.value) {
+                <option [ngValue]="pt.value">{{ pt.label }}</option>
+              }
+            </select>
+            @if (form.get('propertyType')?.invalid && form.get('propertyType')?.touched) {
+              <small class="field-error">Property type is required.</small>
+            }
+          </label>
+ 
+          <label class="field">
+            <span>Budget (USD)</span>
+            <input type="number" id="lf-budget" placeholder="Enter Budget" formControlName="budget" min="0" step="1000">
+          </label>
+ 
+          <label class="field">
+            <span>Stage </span>
+            <select id="lf-stage" formControlName="status">
+              <option [ngValue]="null" disabled>Select stage</option>
+              @for (status of statuses(); track status.value) {
+                <option [ngValue]="status.value">{{ status.label }}</option>
+              }
+            </select>
+            @if (form.get('status')?.invalid && form.get('status')?.touched) {
+              <small class="field-error">Stage is required.</small>
+            }
+          </label>
+ 
+          <label class="field field-full">
+            <span>Owner </span>
+            <select formControlName="owner">
+              <option [ngValue]="null">Select owner</option>
+              @for (owner of owners(); track owner.value) {
+                <option [ngValue]="owner.value">{{ owner.label }}</option>
+              }
+            </select>
+            @if (form.get('owner')?.invalid && form.get('owner')?.touched) {
+              <small class="field-error">Owner is required.</small>
+            }
+          </label>
+ 
+          <label class="field field-full">
+            <span>Notes</span>
+            <textarea id="lf-notes" formControlName="notes"></textarea>
+          </label>
+ 
+        </div>
+      </form>
+    </div>
+ 
+    <div class="modal-foot">
+      <button class="btn btn-ghost" id="lead-cancel" type="button" (click)="close()">Cancel</button>
+      <button class="btn btn-primary" id="lead-save" type="submit" form="lead-form" [disabled]="isSaving()">
+        {{ isSaving() ? 'Saving…' : (isEditMode() ? 'Save changes' : 'Create lead') }}
+      </button>
+    </div>
+ 
+  </div>
+</div>

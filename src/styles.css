@@ -1,1 +1,120 @@
-/* You can add global styles to this file, and also import other style files */
+@import 'ngx-toastr/toastr';
+@import 'tailwindcss';
+@import "flowbite/src/themes/default";
+@plugin "flowbite/plugin";
+@source "../node_modules/flowbite";
+
+:root {
+  --ink-900:#15233B;
+  --ink-800:#1C2E4A;
+  --ink-700:#2A3F60;
+  --gold-500:#C8893A;
+  --gold-400:#D9A05A;
+  --gold-100:#F3E2C8;
+  --success-600:#3A7D5C;
+  --success-100:#DCEEE3;
+  --danger-600:#C24545;
+  --danger-100:#F8DEDE;
+  --info-600:#3B6EA5;
+  --info-100:#DCE7F3;
+  --warn-600:#B8862C;
+  --warn-100:#F4E6CB;
+
+  --bg-canvas:#FAF8F4;
+  --bg-surface:#FFFFFF;
+  --bg-surface-2:#F4F1EA;
+  --bg-sunken:#EFEAE0;
+  --border-subtle: #E6E0D4;
+  --border-strong: #D6CDB9;
+   --color-pagination: white
+  --text-primary:#1D2433;
+  --text-secondary:#5B6478;
+  --text-tertiary:#8A8F9C;
+  --text-on-ink:#F2EFE7;
+  --text-on-gold:#241405;
+
+  --shadow-sm: 0 1px 2px rgba(21,35,59,0.06), 0 1px 1px rgba(21,35,59,0.04);
+  --shadow-md: 0 6px 16px -4px rgba(21,35,59,0.12), 0 2px 6px rgba(21,35,59,0.06);
+  --shadow-lg: 0 16px 40px -8px rgba(21,35,59,0.22), 0 4px 12px rgba(21,35,59,0.08);
+
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-body: 'Inter', -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --sidebar-w: 256px;
+
+  color-scheme: light;
+  --color-background-primary: #ffffff;         
+  --color-background-secondary: #f9fafb;        
+  --color-background-tertiary: #f3f4f6;        
+
+
+  --color-text-primary: #111827;                
+  --color-text-secondary: #6b7280;              
+
+
+  --color-border-secondary: #e5e7eb;            
+  --color-border-tertiary: #e5e7eb;            
+}
+
+
+@utility container{
+    margin: 0 auto;
+}
+
+@theme{
+    --color-mainColor: #3490dc;
+  --color-Secondary: #6da2dc;
+
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+
+
+}
+
+html[data-theme="dark"]{
+  --ink-900:#0B1320;
+  --ink-800:#0E1722;
+  --ink-700:#16223450;
+  --gold-500:#D9A05A;
+  --gold-400:#E8B274;
+  --gold-100:#3A2C16;
+  --success-600:#5FB988;
+  --success-100:#15301F;
+  --danger-600:#E27272;
+  --danger-100:#3A1818;
+  --info-600:#7AA8DD;
+  --info-100:#172A40;
+  --warn-600:#E0B458;
+  --warn-100:#332512;
+--color-pagination: black
+  --bg-canvas:#0D1420;
+  --bg-surface:#131C2B;
+  --bg-surface-2:#1A2536;
+  --bg-sunken:#0A111C;
+  --border-subtle:#243349;
+  --border-strong:#324663;
+
+  --text-primary:#EDE9DF;
+  --text-secondary:#A8AEBD;
+  --text-tertiary:#717890;
+  --text-on-ink:#EDE9DF;
+  --text-on-gold:#1B1304;
+
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
+  --shadow-md: 0 6px 16px -4px rgba(0,0,0,0.45);
+  --shadow-lg: 0 16px 40px -8px rgba(0,0,0,0.6);
+  color-scheme: dark;
+}
+
+
+
+
+button{
+  cursor: pointer;
+}

@@ -1,0 +1,218 @@
+<section class="view" id="view-properties">
+    
+ 
+        <div class="toolbar">
+          <div class="toolbar-left">
+           <div class="search-box">
+  <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 10-.7.7l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0A4.5 4.5 0 1114 9.5 4.5 4.5 0 019.5 14z"></path></svg>
+  <input
+    type="text"
+    id="property-search"
+    class="search-input ring-0"
+    placeholder="Search by unit, address, region…"
+    [(ngModel)]="queryFilters.search"
+    (ngModelChange)="onFilterChange()"
+  >
+</div>
+ 
+<select id="property-region-filter" class="select-filter" [(ngModel)]="queryFilters.regionId" (ngModelChange)="onFilterChange()">
+  <option [ngValue]="null">All Regions</option>
+  @for (region of regions(); track region.id) {
+    <option [ngValue]="region.id">{{ region.fullName || region.name }}</option>
+  }
+</select>
+ 
+<select id="property-stage-filter" class="select-filter" [(ngModel)]="queryFilters.constructionStage" (ngModelChange)="onFilterChange()">
+  <option [ngValue]="null">All Stages</option>
+  @for (stage of ConstructionStages(); track stage.value) {
+    <option [ngValue]="stage.value">{{ stage.name }}</option>
+  }
+</select>
+ 
+<select id="property-status-filter" class="select-filter" [(ngModel)]="queryFilters.status" (ngModelChange)="onFilterChange()">
+  <option [ngValue]="null">All Statuses</option>
+  @for (status of PropertyStatuses(); track status.value) {
+    <option [ngValue]="status.value">{{  status.name }}</option>
+  }
+</select>
+          </div>
+          <div class="toolbar-right">
+      
+            <button class="btn btn-primary" (click)="openAddPropertyModal()" id="add-property-btn">+ Add Property</button>
+          </div>
+        </div>
+ 
+        <div id="properties-grid-wrap" class="">
+ 
+@for (property of properties(); track property.id) {
+  <div class="property-card" (click)="openViewPropertyModal(property.id)"  style="--stage-color:var(--success-600)">
+    <div class="property-card-banner">
+      <svg class="property-card-banner-icon" viewBox="0 0 24 24"><path d="M5 21V3h8v6h6v12H5zm2-2h4v-2H7v2zm0-4h4v-2H7v2zm0-4h4V7H7v4zm6 8h4v-2h-4v2zm0-4h4v-2h-4v2z"></path></svg>
+      <div class="property-card-project">{{property.regionName}}</div>
+      <div class="property-card-unit">{{property.unit}}</div>
+    </div>
+    <div class="property-card-body">
+      <div class="property-card-head">
+        <div>
+          <div class="cell-primary">{{property.propertyTypeName}}</div>
+          <div class="property-card-address">{{property.addressName}}</div>
+        </div>
+        <span class="status-pill" [ngClass]="'status-'+ property.statusLabel">{{property.statusLabel}}</span>
+      </div>
+      <div class="property-card-specs">
+        <span>
+  @if (property.officeNumbers) {
+    {{ property.officeNumbers }} offices
+  } @else {
+    {{ property.beds }} beds  {{ property.baths }} baths
+  }
+</span><span>·</span><span>{{property.area}} sqft</span>
+      </div>
+      <div class="cell-sub" style="margin-top:6px;">{{property.developerCompanyName}} · {{property.expectedCommissionPct}}% commission</div>
+      
+      <div class="property-card-foot">
+        <span class="property-card-price">${{property.price |number:'1.0-0'}}</span>
+      </div>
+      <div class="flex justify-between">
+      <div class="entity-meta">Created by {{property.createdByName}} · Created At {{property.createdAt |date:"MM/dd/yyyy"}}</div>
+      <div class="flex">
+        <button class="icon-btn ms-1.5" title="Edit" (click)="$event.stopPropagation(); openAddPropertyModal(property.id)">
+                    <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 000-1.41l-2.34-2.34a1 1 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"></path></svg>
+                  </button>
+        <button class="icon-btn danger ms-1.5" data-action="delete-lead" [attr.data-id]="property.id" title="Delete" (click)="$event.stopPropagation(); openDeleteModal(property.id)">
+                    <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8a2 2 0 002-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg>
+                  </button>
+      </div>
+    </div>
+    </div>
+  </div>
+}
+</div>
+     @if (totalPages() > 0) {
+    <div class="pagination-bar   ">
+     <div class="pagination-info">
+  Page {{queryFilters.pageNumber}} of {{totalPages()}} — {{totalCount()}} total leads
+</div>
+
+      <div class="pagination-controls">
+        <select class="select-filter page-size-select"
+                [(ngModel)]="queryFilters.pageSize"
+                (change)="onPageSizeChange()">
+          <option [ngValue]="10">10 / صفحة</option>
+          <option [ngValue]="25">25 / صفحة</option>
+          <option [ngValue]="50">50 / صفحة</option>
+        </select>
+
+        <button class="icon-btn" [disabled]="queryFilters.pageNumber === 1" (click)="prevPage()">
+          <svg viewBox="0 0 24 24"><path d="M15.5 5L8.5 12l7 7"></path></svg>
+        </button>
+
+        @for (page of pagesArray(); track page) {
+          <button class="page-btn" [class.active]="page === queryFilters.pageNumber"
+                  (click)="goToPage(page)">
+            {{page}}
+          </button>
+        }
+
+        <button class="icon-btn" [disabled]="queryFilters.pageNumber === totalPages()" (click)="nextPage()">
+          <svg viewBox="0 0 24 24"><path d="M8.5 5l7 7-7 7"></path></svg>
+        </button>
+      </div>
+    </div>
+  }
+      </section>
+ 
+ 
+      @if(IsdeletModal()) {
+     <div class="modal-overlay" id="modal-overlay" (click)="closeDeleteModal()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <div class="modal-head">
+        <h2>Delete property</h2>
+        <button class="modal-close" (click)="closeDeleteModal()">
+          <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to delete this property? This action can't be undone.</p>
+     
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-ghost" id="del-cancel" (click)="closeDeleteModal()" [disabled]="isDeleting()">Cancel</button>
+        <button class="btn btn-danger" id="del-confirm" (click)="confirmDelete()" [disabled]="isDeleting()">
+          {{ isDeleting() ? 'Deleting…' : 'Delete Property' }}
+        </button>
+      </div>
+    </div>
+  </div>
+      }
+ 
+      @if(isAddPropertyModalOpen()) {
+      <component-properity-modal [editingPropertyId]="priorityID()"
+    (onClose)="closeAddPropertyModal()"  ></component-properity-modal>
+      }
+ 
+      @if (isViewPropertyModalOpen()) {
+  <div class="modal-overlay" id="view-property-modal-overlay" (click)="closeViewPropertyModal()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <div class="modal-head">
+        <h2>Unit {{ selectedProperty()?.unit }} — {{ selectedProperty()?.regionName }}</h2>
+        <button class="modal-close" (click)="closeViewPropertyModal()">
+          <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+        </button>
+      </div>
+ 
+      <div class="modal-body">
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:16px;flex-wrap:wrap;">
+          <span class="status-pill" style="background:color-mix(in srgb, var(--warn-600) 16%, transparent);color:var(--warn-600)">
+            {{ selectedProperty()?.constructionStageLabel }}
+          </span>
+          <span class="status-pill" [ngClass]="'status-' + selectedProperty()?.statusLabel">
+            {{ selectedProperty()?.statusLabel }}
+          </span>
+        </div>
+ 
+        <div class="detail-section">
+          <h4>Overview</h4>
+          <div class="detail-row"><span class="dlabel">Region</span><span class="dval">{{ selectedProperty()?.regionName }}</span></div>
+          <div class="detail-row"><span class="dlabel">Address</span><span class="dval">{{ selectedProperty()?.addressName }}</span></div>
+          <div class="detail-row"><span class="dlabel">Type</span><span class="dval">{{ selectedProperty()?.propertyTypeName }}</span></div>
+ 
+          @if (selectedProperty()?.officeNumbers) {
+            <div class="detail-row"><span class="dlabel">Office Numbers</span><span class="dval">{{ selectedProperty()?.officeNumbers }}</span></div>
+          } @else {
+            <div class="detail-row"><span class="dlabel">Beds</span><span class="dval">{{ selectedProperty()?.beds }}</span></div>
+            <div class="detail-row"><span class="dlabel">Baths</span><span class="dval">{{ selectedProperty()?.baths }}</span></div>
+          }
+ 
+          <div class="detail-row"><span class="dlabel">Area</span><span class="dval">{{ selectedProperty()?.area | number:'1.0-0' }} sqft</span></div>
+          <div class="detail-row"><span class="dlabel">Price</span><span class="dval">${{ selectedProperty()?.price | number:'1.0-0' }}</span></div>
+          <div class="detail-row"><span class="dlabel">Construction Started</span><span class="dval">{{ selectedProperty()?.createdAt | date:"MMM d, yyyy" }}</span></div>
+          <div class="detail-row"><span class="dlabel">Assigned Agent</span><span class="dval">{{ selectedProperty()?.agentName }}</span></div>
+ 
+          <div class="detail-row"><span class="dlabel">Created By</span><span class="dval">{{ selectedProperty()?.createdByName }}</span></div>
+        </div>
+ 
+        <div class="detail-section">
+          <h4>Developer &amp; Commission</h4>
+          <div class="detail-row"><span class="dlabel">Developer</span><span class="dval">{{ selectedProperty()?.developerCompanyName }}</span></div>
+          <div class="detail-row">
+            <span class="dlabel">Expected Commission</span>
+            <span class="dval">{{ selectedProperty()?.expectedCommissionPct }}% · ${{ (((selectedProperty()?.expectedCommissionPct ?? 0) / 100) * (selectedProperty()?.price ?? 0)) | number:'1.0-0' }}</span>
+          </div>
+        </div>
+ 
+        @if (selectedProperty()?.notes) {
+          <div class="detail-section">
+            <h4>Notes</h4>
+            <p style="font-size:13.5px;color:var(--text-secondary);line-height:1.5;">{{ selectedProperty()?.notes }}</p>
+          </div>
+        }
+      </div>
+ 
+      <div class="modal-foot">
+        <button class="btn btn-ghost" id="prop-detail-close" (click)="closeViewPropertyModal()">Close</button>
+        <button class="btn btn-primary" id="prop-detail-edit" (click)="editFromViewModal()">Edit Property</button>
+      </div>
+    </div>
+  </div>
+}

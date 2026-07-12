@@ -1,0 +1,123 @@
+<div class="modal-overlay" (click)="close() ;" >
+  <div class="modal-card" (click)="$event.stopPropagation()">
+    <div class="modal-head">
+      <h2>{{ isEditMode ? 'Edit Task' : 'Add New Task' }}</h2>
+      <button class="modal-close" type="button" (click)="close() ;">
+        <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+      </button>
+    </div>
+
+    <div class="modal-body">
+    
+
+      <form [formGroup]="taskForm" id="task-form">
+        <div class="form-grid">
+
+          <label class="field field-full">
+            <span>Task Title</span>
+            <input type="text" placeholder="Task Title..." formControlName="title" required>
+           @if (taskForm.get('title')?.invalid && taskForm.get('title')?.touched) {
+          <span class="mt-1">
+            @if (taskForm.get('title')?.hasError('required')) {
+              Title is required.
+            }
+          </span>
+        }</label>
+ 
+          <label class="field">
+            <span>Status</span>
+            <select formControlName="status">
+              <option [ngValue]="null" disabled>Select status</option>
+              @for (s of statuses(); track s.value) {
+                <option [ngValue]="s.value">{{ s.label }}</option>
+              }
+            </select>
+ @if (taskForm.get('status')?.invalid && taskForm.get('status')?.touched) {
+          <span class="mt-1">Status is required.</span>
+        }
+          </label>
+  
+          <label class="field">
+            <span>Priority</span>
+            <select formControlName="priority">
+              <option [ngValue]="null" disabled>Select priority</option>
+              @for (p of priorities(); track p.value) {
+                <option [ngValue]="p.value">{{ p.label }}</option>
+              }
+            </select>
+            @if (taskForm.get('priority')?.invalid && taskForm.get('priority')?.touched) {
+          <span class="mt-1">Priority is required.</span>
+        }
+          </label>
+
+          <label class="field">
+            <span>Due Date</span>
+            <input type="date" formControlName="dueDate" required>
+     @if (taskForm.get('dueDate')?.invalid && taskForm.get('dueDate')?.touched) {
+          <span class="error-text">
+            @if (taskForm.get('dueDate')?.hasError('required')) {
+              Due date is required.
+            } @else if (taskForm.get('dueDate')?.hasError('pastDate')) {
+              Due date must be in the future.
+            }
+          </span>
+        }         
+          </label>
+
+          <label class="field">
+            <span>Assignee</span>
+            <select formControlName="assigneeId">
+              <option [ngValue]="''" disabled>Select assignee</option>
+              @for (u of users(); track u.id) {
+                <option [ngValue]="u.id">{{ u.fullName }}</option>
+              }
+            </select>
+               @if (taskForm.get('assigneeId')?.invalid && taskForm.get('assigneeId')?.touched) {
+          <span class="error-text">Assignee is required.</span>
+        }
+          </label>
+
+          <label class="field">
+            <span>Related Lead <span class="field-hint">(optional)</span></span>
+            <select formControlName="leadId">
+              <option [ngValue]="null">— None —</option>
+              @for (l of leads(); track l.id) {
+                <option [ngValue]="l.id">{{ l.fullName }}</option>
+              }
+            </select>
+          </label>
+
+          <label class="field">
+            <span>Related Customer <span class="field-hint">(optional)</span></span>
+            <select formControlName="customerId">
+              <option [ngValue]="null">— None —</option>
+              @for (c of customers(); track c.id) {
+                <option [ngValue]="c.id">{{ c.fullName }}</option>
+              }
+            </select>
+          </label>
+
+          <label class="field field-full">
+            <span>Notes</span>
+            <textarea formControlName="notes" rows="3" placeholder="Optional notes..."></textarea>
+          </label>
+
+          <p class="field field-full field-note">
+            A task can link to a lead or a customer, not both — picking one clears the other.
+          </p>
+        </div>
+      </form>
+    </div>
+
+    <div class="modal-foot">
+      <button class="btn btn-ghost" type="button" (click)="close()">Cancel</button>
+      <button
+        class="btn btn-primary"
+        type="button"
+        [disabled]="isSaving() || isLoadingLookups() || isLoadingTask()"
+        (click)="save()">
+        {{ isSaving() ? 'Saving...' : (isEditMode ? 'Save Changes' : 'Create Task') }}
+      </button>
+    </div>
+  </div>
+</div>

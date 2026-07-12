@@ -1,0 +1,199 @@
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(13, 20, 32, 0.55);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 20px;
+  animation: fadeIn .15s ease;
+}
+
+/* الكارت أو الحاوية الرئيسية للمودال (تحديد العرض والتمرير والظل) */
+.modal-card {
+  background: var(--bg-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  width: min(560px, 100%);
+  max-height: 88vh;
+  overflow-y: auto;
+  border: 1px solid var(--border-subtle);
+}
+
+/* رأس المودال (يحتوي على العنوان وزر الإغلاق ويظل ثابتاً عند التمرير) */
+.modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border-subtle);
+  position: sticky;
+  top: 0;
+  background: var(--bg-surface);
+  z-index: 1;
+}
+
+.modal-head h2 {
+  font-family: var(--font-display);
+  font-size: 19px;
+  font-weight: 600;
+}
+
+/* زر الإغلاق (علامة الـ X) وتأثير الحوم فوقه */
+.modal-close {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-tertiary);
+  transition: background .15s, color .15s;
+}
+
+.modal-close:hover {
+  background: var(--bg-surface-2);
+  color: var(--text-primary);
+}
+
+.modal-close svg {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+}
+
+/* جسم المودال الداخلي والمسافات المحيطة بالفورم */
+.modal-body {
+  padding: 22px 24px;
+}
+
+/* أسفل المودال (منطقة الأزرار والخط الفاصل) */
+.modal-foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 18px 24px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+/* ============================================================
+   FORM FIELDS & GRIDS (توزيع الحقول داخل الفورم)
+   ============================================================ */
+
+/* تقسيم الحقول إلى عمودين متساويين تلقائياً */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+/* جعل الحقل يمتد ليأخذ العرض الكامل للمودال (مثل حقل الـ Notes) */
+.form-grid .field-full {
+  grid-column: 1 / -1;
+}
+
+/* تنسيق الحقل ككتلة واحدة */
+.field {
+  display: block;
+}
+
+/* عناوين الحقول الصغيرة فوق خانات الإدخال */
+.field span {
+  display: block;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+
+/* تنسيق خانات الإدخال والقوائم المنسدلة (Inputs & Selects) */
+.field input, 
+.field select {
+  width: 100%;
+  padding: 11px 13px;
+  background: var(--bg-surface-2);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  color: var(--text-primary);
+  transition: border-color .15s, box-shadow .15s;
+}
+
+/* تأثير التركيز (Focus) عند الضغط داخل الحقل */
+.field input:focus, 
+.field select:focus {
+  outline: none;
+  border-color: var(--gold-500);
+  box-shadow: 0 0 0 3px var(--gold-100);
+}
+
+/* تنسيق مربع النص الكبير (Textarea) للملاحظات */
+.field textarea {
+  width: 100%;
+  padding: 11px 13px;
+  background: var(--bg-surface-2);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  color: var(--text-primary);
+  resize: vertical;
+  min-height: 80px;
+  transition: border-color .15s, box-shadow .15s;
+}
+
+.field textarea:focus {
+  outline: none;
+  border-color: var(--gold-500);
+  box-shadow: 0 0 0 3px var(--gold-100);
+}
+
+/* ============================================================
+   BUTTONS (الأزرار المستخدمة أسفل المودال)
+   ============================================================ */
+
+/* التنسيق الأساسي للمفاتيح */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 11px 18px;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 600;
+  transition: transform .12s ease, box-shadow .15s ease, background .15s ease;
+  white-space: nowrap;
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+/* الزر الرئيسي (Create Lead) باللون الذهبي */
+.btn-primary {
+  background: var(--gold-500);
+  color: var(--text-on-gold);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-primary:hover {
+  background: var(--gold-400);
+  box-shadow: var(--shadow-md);
+}
+
+/* الزر الشفاف (Cancel) */
+.btn-ghost {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-subtle);
+}
+
+.btn-ghost:hover {
+  background: var(--bg-surface-2);
+  color: var(--text-primary);
+}
+
+

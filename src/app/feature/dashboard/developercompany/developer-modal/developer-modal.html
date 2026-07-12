@@ -1,0 +1,58 @@
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal-card">
+    <div class="modal-head">
+      @if (companyselected) {
+        <h2>Edit Developer Company</h2>
+      } @else {
+        <h2>Add Developer Company</h2>
+      }
+      <button class="modal-close" (click)="close()">
+        <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <form id="dev-form" [formGroup]="form">
+        <div class="form-grid">
+          <label class="field field-full">
+            <span>Company Name</span>
+            <input type="text" id="df-name" formControlName="name">
+            @if (form.get('name')?.invalid && form.get('name')?.touched) {
+              <span class="error-text">Company name is required.</span>
+            }
+          </label>
+
+          <label class="field">
+            <span>Phone <span class="cell-sub">(optional)</span></span>
+            <input type="text" id="df-phone" formControlName="contactPhone">
+          </label>
+
+          <label class="field">
+            <span>Email <span class="cell-sub">(optional)</span></span>
+            <input type="email" id="df-email" formControlName="contactEmail">
+            @if (form.get('contactEmail')?.invalid && form.get('contactEmail')?.touched) {
+              <span class="error-text">Invalid email.</span>
+            }
+          </label>
+        </div>
+      </form>
+
+      @if (errorMessage) {
+        <p class="error-text">{{ errorMessage }}</p>
+      }
+    </div>
+
+    <div class="modal-foot">
+      <button class="btn btn-ghost" id="dev-cancel" (click)="close()">Cancel</button>
+      <button class="btn btn-primary" id="dev-save" [disabled]="isSaving" (click)="save()">
+        @if (isSaving) {
+          Saving...
+        } @else if (companyselected) {
+          Save Changes
+        } @else {
+          Add Developer Company
+        }
+      </button>
+    </div>
+  </div>
+</div>

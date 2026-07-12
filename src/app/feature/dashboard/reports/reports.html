@@ -1,0 +1,188 @@
+<section class="view">
+  <div class="toolbar">
+    <div class="view-toggle">
+      <button class="vtoggle-btn" [class.active]="activeTab() === 'leads'" (click)="setTab('leads')">
+        Leads Report
+      </button>
+      <button class="vtoggle-btn" [class.active]="activeTab() === 'revenue'" (click)="setTab('revenue')">
+        Revenue Report
+      </button>
+      <button class="vtoggle-btn" [class.active]="activeTab() === 'properties'" (click)="setTab('properties')">
+        Properties Report
+      </button>
+      <button class="vtoggle-btn" [class.active]="activeTab() === 'performance'" (click)="setTab('performance')">
+        Sales Performance
+      </button>
+    </div>
+  </div>
+
+  <!-- LEADS REPORT -->
+  @if (activeTab() === 'leads') {
+    <div class="report-section">
+      <div class="dash-grid">
+        <div class="panel panel-large" >
+          <div class="panel-head"><h3>Leads by Source</h3></div>
+          <div class="panel-body">
+            @if (leadsSourceChart(); as chart) {
+              <svg [attr.viewBox]="'0 0 ' + chart.width + ' ' + chart.height" class="chart-svg">
+                <line x1="40" [attr.y1]="chart.baselineY" [attr.x2]="chart.width - 20" [attr.y2]="chart.baselineY"
+                      stroke="var(--border-subtle)" />
+                @for (bar of chart.bars; track bar.label) {
+                  <rect [attr.x]="bar.x" [attr.y]="bar.y" [attr.width]="bar.width" [attr.height]="bar.height"
+                        rx="4" fill="var(--info-600)" opacity="0.85" />
+                  <text [attr.x]="bar.x + bar.width / 2" [attr.y]="bar.y - 6" font-size="11"
+                        font-family="var(--font-mono)" font-weight="700" fill="var(--text-primary)"
+                        text-anchor="middle">{{ bar.valueLabel }}</text>
+                  <text [attr.x]="bar.x + bar.width / 2" [attr.y]="chart.baselineY + 26" font-size="10"
+                        fill="var(--text-tertiary)" text-anchor="middle">{{ bar.label }}</text>
+                }
+              </svg>
+            } @else {
+              <p class="empty-state">No lead source data yet.</p>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+
+  @if (activeTab() === 'revenue') {
+    <div class="report-section">
+      <div class="dash-grid">
+        <div class="panel panel-large">
+          <div class="panel-head">
+            <h3>Monthly Revenue</h3>
+            <div class="revenue-pager">
+              <button class="pager-btn" (click)="goOlderRevenue()" [disabled]="!canGoOlderRevenue()" title="Older 6 months">‹</button>
+              <div class="tag-pill">{{ revenuePagerLabel() }}</div>
+              <button class="pager-btn" (click)="goNewerRevenue()" [disabled]="!canGoNewerRevenue()" title="Newer 6 months">›</button>
+            </div>
+          </div>
+          <div class="panel-body">
+            @if (revenueBarChart(); as chart) {
+              <svg [attr.viewBox]="'0 0 ' + chart.width + ' ' + chart.height" class="chart-svg">
+                <line x1="40" [attr.y1]="chart.baselineY" [attr.x2]="chart.width - 20" [attr.y2]="chart.baselineY"
+                      stroke="var(--border-subtle)" />
+                @for (bar of chart.bars; track bar.label) {
+                  <rect [attr.x]="bar.x" [attr.y]="bar.y" [attr.width]="bar.width" [attr.height]="bar.height"
+                        rx="4" fill="var(--gold-500)" opacity="0.85" />
+                  <text [attr.x]="bar.x + bar.width / 2" [attr.y]="bar.y - 6" font-size="11"
+                        font-family="var(--font-mono)" font-weight="700" fill="var(--text-primary)"
+                        text-anchor="middle">{{ bar.valueLabel }}</text>
+                  <text [attr.x]="bar.x + bar.width / 2" [attr.y]="chart.baselineY + 26" font-size="10"
+                        fill="var(--text-tertiary)" text-anchor="middle">{{ bar.label }}</text>
+                }
+              </svg>
+            } @else {
+              <p class="empty-state">No revenue data yet.</p>
+            }
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head"><h3>Revenue by Property Type</h3></div>
+          <div class="panel-body">
+            @if (revenueTypeDonut().length > 0) {
+              <svg viewBox="0 0 200 200" class="chart-svg">
+                @for (seg of revenueTypeDonut(); track seg.label) {
+                  <circle cx="100" cy="100" r="70" fill="none" [attr.stroke]="seg.color" stroke-width="26"
+                          [attr.stroke-dasharray]="seg.dashArray" [attr.stroke-dashoffset]="seg.dashOffset"
+                          transform="rotate(-90 100 100)" />
+                }
+                <text x="100" y="104" text-anchor="middle" font-size="13" fill="var(--text-tertiary)"
+                      font-family="var(--font-mono)">{{ revenueTypeTotalLabel() }}</text>
+              </svg>
+              <div class="legend">
+                @for (item of revenueTypeLegend(); track item.label) {
+                  <div class="legend-item">
+                    <span class="legend-dot" [style.background]="item.color"></span>
+                    {{ item.label }} ({{ item.valueLabel }})
+                  </div>
+                }
+              </div>
+            } @else {
+              <p class="empty-state">No property-type revenue yet.</p>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- PROPERTIES REPORT -->
+  @if (activeTab() === 'properties') {
+    <div class="report-section">
+      <div class="dash-grid">
+        <div class="panel">
+          <div class="panel-head"><h3>Properties by Status</h3></div>
+          <div class="panel-body">
+            @if (propertiesStatusDonut().length > 0) {
+              <svg viewBox="0 0 200 200" class="chart-svg">
+                @for (seg of propertiesStatusDonut(); track seg.label) {
+                  <circle cx="100" cy="100" r="70" fill="none" [attr.stroke]="seg.color" stroke-width="26"
+                          [attr.stroke-dasharray]="seg.dashArray" [attr.stroke-dashoffset]="seg.dashOffset"
+                          transform="rotate(-90 100 100)" />
+                }
+                <text x="100" y="96" text-anchor="middle" font-size="26" font-weight="700"
+                      fill="var(--text-primary)" font-family="var(--font-display)">{{ propertiesTotal() }}</text>
+                <text x="100" y="116" text-anchor="middle" font-size="11" fill="var(--text-tertiary)">total units</text>
+              </svg>
+              <div class="legend">
+                @for (item of propertiesStatusLegend(); track item.label) {
+                  <div class="legend-item">
+                    <span class="legend-dot" [style.background]="item.color"></span>
+                    {{ item.label }} ({{ item.valueLabel }})
+                  </div>
+                }
+              </div>
+            } @else {
+              <p class="empty-state">No property status data yet.</p>
+            }
+          </div>
+        </div>
+
+     
+      </div>
+    </div>
+  }
+
+  <!-- SALES PERFORMANCE -->
+  @if (activeTab() === 'performance') {
+    <div class="report-section">
+      <div class="table-card">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Agent</th>
+              <th>Leads</th>
+              <th>Deals Won</th>
+              <th>Revenue</th>
+              <th>Win Rate</th>
+              <th>Avg. Deal Size</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of performanceRows(); track row.name) {
+              <tr>
+                <td>
+                  <div class="owner-cell">
+                    <div class="mini-avatar">{{ row.initials }}</div>
+                    <span class="cell-primary">{{ row.name }}</span>
+                  </div>
+                </td>
+                <td>{{ row.totalLeads }}</td>
+                <td>{{ row.dealsWon }}</td>
+                <td class="cell-mono">{{ row.revenue }}</td>
+                <td>{{ row.winRatePct }}</td>
+                <td class="cell-mono">{{ row.avgDealValue }}</td>
+              </tr>
+            } @empty {
+              <tr><td colspan="6" class="empty-state">No agent performance data yet.</td></tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+</section>

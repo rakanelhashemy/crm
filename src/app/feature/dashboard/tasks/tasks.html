@@ -1,0 +1,137 @@
+<section class="view " id="view-tasks">
+  <div class="toolbar">
+    <div class="toolbar-left">
+      <div class="search-box">
+        <svg viewBox="0 0 24 24">
+          <path d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 10-.7.7l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0A4.5 4.5 0 1114 9.5 4.5 4.5 0 019.5 14z"></path>
+        </svg>
+       <input 
+  type="text"
+  class="ring-0 py-0" 
+  [ngModel]="queryFilters().search" 
+  (ngModelChange)="onSearchChange($event)" 
+  placeholder="Search By Notes, title..." />
+      </div>
+    </div>
+    <div class="toolbar-right">
+      <button class="btn btn-primary" id="add-task-btn" (click)="openAddModal()" >+ Add Task</button>
+    </div>
+  </div>
+
+  <div class="kanban-board " id="tasks-kanban">
+    
+    @for (col of columns(); track col.statusNumber) {
+      <div  
+        class="kanban-col" 
+        [attr.data-status]="col.status"
+        (dragover)="onDragOver($event)"
+        (drop)="onDrop($event, col.statusNumber)"
+      >
+        <div class="kanban-col-head">
+          <div class="kanban-col-title">
+            <span class="kanban-dot" [style.background]="col.colorVar"></span>
+            {{ col.label }}
+          </div>
+          <div class="kanban-count">{{ getTaskCount(col.statusNumber) }}</div>
+        </div>
+
+        <div class="kanban-cards" [attr.data-dropzone]="col.status">
+          
+          @for (task of getFilteredTasks(col.statusNumber); track task.id) {
+            <div 
+              class="kanban-card" 
+              draggable="true" 
+              (click)=" openEditModal( task.id)"
+              [attr.data-id]="task.id"
+              (dragstart)="$event.dataTransfer ? onDragStart($event, task.id) : null"
+            >
+              <div class="kanban-card-title">{{ task.title }}</div>
+              
+              @if (task.subtitle) {
+                <div class="kanban-card-sub">{{ task.subtitle }}</div>
+              } @else if (task.customerName) {
+                <div class="kanban-card-sub">Customer: {{ task.customerName }}</div>
+              } @else if (task.leadName) {
+                <div class="kanban-card-sub">Lead: {{ task.leadName }}</div>
+              }
+              
+              <div class="kanban-card-foot">
+                <span class="priority-pill" [ngClass]="'priority-' + task.priorityLabel">
+                  {{ task.priorityLabel }}
+                </span>
+                <span class="cell-sub" [class.text-danger]="task.isOverdue">
+                  {{ task.dueDate | date:'mediumDate' }}
+                </span>
+              </div>
+
+              <div style="margin-top:8px; display:flex; align-items:center; gap:6px;">
+                <div class="mini-avatar">{{ task.assigneeName |nameavtar  }}</div>
+                <span class="cell-sub">{{ task.assigneeName  }}</span>
+              </div>
+
+              <div class="entity-meta">
+                @if (task.updatedByName) { Updated by {{ task.updatedByName }} {{(task.updatedAt)|date:'mediumDate' }} }
+                @else
+                {
+                  Created by {{ task.createdByName  }}   {{(task.updatedAt)|date:'mediumDate' }} 
+                }
+                <br> 
+              </div>
+            </div>
+          } @empty {
+            <div class="empty-col-message" style="text-align:center; color: #888; padding: 20px 0; font-size: 0.9rem;">
+              No tasks found
+            </div>
+          }
+
+        </div>
+      </div>
+    }
+
+  </div>
+
+ <div class="  ">
+    @if (totalPages() > 0) {
+    <div class="pagination-bar  ">
+     <div class="pagination-info">
+  Page {{queryFilters().pageNumber}} of {{totalPages()}} — {{totalCount()}} total Tasks
+</div>
+
+      <div class="pagination-controls">
+        <select class="select-filter page-size-select"
+                [(ngModel)]="queryFilters().pageSize"
+                (change)="onPageSizeChange()">
+          <option [ngValue]="10">10 / صفحة</option>
+          <option [ngValue]="25">25 / صفحة</option>
+          <option [ngValue]="50">50 / صفحة</option>
+        </select>
+
+        <button class="icon-btn" [disabled]="queryFilters().pageNumber === 1" (click)="prevPage()">
+          <svg viewBox="0 0 24 24"><path d="M15.5 5L8.5 12l7 7"></path></svg>
+        </button>
+
+        @for (page of pagesArray(); track page) {
+          <button class="page-btn" [class.active]="page === queryFilters().pageNumber"
+                  (click)="goToPage(page)">
+            {{page}}
+          </button>
+        }
+
+        <button class="icon-btn" [disabled]="queryFilters().pageNumber === totalPages()" (click)="nextPage()">
+          <svg viewBox="0 0 24 24"><path d="M8.5 5l7 7-7 7"></path></svg>
+        </button>
+      </div>
+    </div>
+  }
+ </div>
+</section>
+
+
+@if( isModalOpen())
+{
+<component-tasks-modal 
+ [tasksId]="editingTasksId()"
+    (closed)="closeModal()"
+></component-tasks-modal>
+
+}

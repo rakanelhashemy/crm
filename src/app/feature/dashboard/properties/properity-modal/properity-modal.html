@@ -1,0 +1,281 @@
+<div class="modal-overlay" id="modal-overlay" (click)="onClose.emit()">
+  <div class="modal-card" (click)="$event.stopPropagation()">
+    <div class="modal-head">
+      <h2>{{ isEditMode() ? 'Edit Property' : 'Add Property' }}</h2>
+      <button class="modal-close" (click)="onClose.emit()">
+        <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+      </button>
+    </div>
+  
+    <div class="modal-body">
+      <form id="property-form" [formGroup]="propertyForm" (ngSubmit)="onSubmit()">
+        <div class="form-grid">
+ 
+          <label class="field">
+            <span>Unit</span>
+            <input type="text" formControlName="unit" required>
+            @if (propertyForm.get('unit')?.invalid && propertyForm.get('unit')?.touched) {
+              <small class="field-error">Unit is required.</small>
+            }
+          </label>
+ 
+          <div class="field">
+            <span>Property Type</span>
+            <div style="display:flex;gap:6px;">
+              <select formControlName="type" style="flex:1;">
+                <option value="">Select Type</option>
+                @for (s of PropertyStatuses(); track s.id) {
+                  <option [value]="s.id">{{ s.name }}</option>
+                }
+              </select>
+              <button type="button" class="btn btn-ghost btn-sm" title="Add a new property type" (click)="ISoproperitytype.set(true)">+ Type</button>
+              <button type="button" class="btn btn-ghost btn-sm" title="Delete selected property type" (click)="deleteSelectedPropertyType()">🗑</button>
+            </div>
+            @if (propertyForm.get('type')?.invalid && propertyForm.get('type')?.touched) {
+              <small class="field-error">Please select a property type.</small>
+            }
+ 
+            @if (ISoproperitytype()) {
+              <div style="display:flex;gap:6px;margin-top:6px;">
+                <input type="text" [formControl]="newTypeName" placeholder="e.g. Penthouse"
+                  style="flex:1;padding:7px 10px;border:1px solid var(--border-strong);border-radius:var(--radius-sm);font-size:13px;background:var(--bg-canvas);">
+                <button type="button" class="btn btn-primary btn-sm" (click)="saveNewPropertyType()">Add</button>
+                <button type="button" class="btn btn-ghost btn-sm" (click)="ISoproperitytype.set(false)">✕</button>
+              </div>
+              @if (newTypeName.invalid && newTypeName.touched) {
+                <small class="field-error">Please enter a type name.</small>
+              }
+            }
+          </div>
+ 
+          <label class="field">
+            <span>Region</span>
+            <div style="display:flex;gap:6px;">
+              <select formControlName="region" style="flex:1;">
+                <option value="">Select Region</option>
+                @for (r of regions(); track r.id) {
+                  <option [value]="r.id">{{ r.name }}</option>
+                }
+              </select>
+              <button type="button" class="btn btn-ghost btn-sm" title="Add new region" (click)="openregion()">+ Region</button>
+              <button type="button" class="btn btn-ghost btn-sm" title="Delete selected region" (click)="deleteSelectedRegion()">🗑</button>
+            </div>
+            @if (propertyForm.get('region')?.invalid && propertyForm.get('region')?.touched) {
+              <small class="field-error">Please select a region.</small>
+            }
+          </label>
+ 
+          <label class="field">
+            <span>Address</span>
+            <div style="display:flex;gap:6px;">
+              <select formControlName="address" style="flex:1;">
+                <option value="">Select Address</option>
+                @for (a of Addresses(); track a.id) {
+                  <option [value]="a.id">{{ a.name }}</option>
+                }
+              </select>
+              <button type="button" class="btn btn-ghost btn-sm" title="Add new address to selected region" (click)="openAddress()">+ Address</button>
+              <button type="button" class="btn btn-ghost btn-sm" title="Delete selected address" (click)="deleteSelectedAddress()">🗑</button>
+            </div>
+            @if (propertyForm.get('address')?.invalid && propertyForm.get('address')?.touched) {
+              <small class="field-error">Please select an address.</small>
+            }
+          </label>
+ 
+          @if (ISopenregion()) {
+            <div class="field field-full" style="background:var(--bg-surface-2);border:1px solid var(--border-subtle);border-radius:var(--radius-sm);padding:14px;">
+              <div class="form-grid" style="margin-bottom:0;">
+                <label class="field field-full">
+                  <span>New region name</span>
+                  <input type="text" [formControl]="newRegionName" placeholder="e.g. Ain Sokhna">
+                  @if (newRegionName.invalid && newRegionName.touched) {
+                    <small class="field-error">Please enter a region name.</small>
+                  }
+                </label>
+                <div class="field field-full" style="display:flex;gap:8px;margin-bottom:0;">
+                  <button type="button" class="btn btn-primary btn-sm" (click)="saveNewRegion()">Add Region</button>
+                  <button type="button" class="btn btn-ghost btn-sm" (click)="closeregion()">Cancel</button>
+                </div>
+              </div>
+            </div>
+          }
+ 
+          @if (ISopenAddress()) {
+            <div class="field field-full" style="background:var(--bg-surface-2);border:1px solid var(--border-subtle);border-radius:var(--radius-sm);padding:14px;">
+              <div class="form-grid" style="margin-bottom:0;">
+                <label class="field field-full">
+                  <span>New address</span>
+                  <input type="text" [formControl]="newAddressName" placeholder="e.g. Marina District, Plot 5">
+                  @if (newAddressName.invalid && newAddressName.touched) {
+                    <small class="field-error">Please enter an address.</small>
+                  }
+                </label>
+                <div class="field field-full" style="display:flex;gap:8px;margin-bottom:0;">
+                  <button type="button" class="btn btn-primary btn-sm" (click)="saveNewAddress()">Add Address</button>
+                  <button type="button" class="btn btn-ghost btn-sm" (click)="closeAddress()">Cancel</button>
+                </div>
+              </div>
+            </div>
+          }
+         
+
+          <div class="field">
+            <span>Status <span style="font-weight:400;color:var(--text-tertiary);">(auto)</span></span>
+            <div class="status-pill status-Available" style="display:inline-flex;width:fit-content;">Available</div>
+          </div>
+   @if ( propertyForm.get("type")?.value =="c37e0e25-84bf-4f66-2180-08ded526fc05") {
+  <label class="field pf-residential-field">
+            <span>Beds</span>
+            <input type="number" formControlName="beds" min="0">
+            @if (propertyForm.get('beds')?.errors?.['min'] && propertyForm.get('beds')?.touched) {
+              <small class="field-error">Beds can't be negative or 0.</small>
+            }
+          </label>
+          <label class="field pf-residential-field">
+            <span>Baths</span>
+            <input type="number" formControlName="baths" min="0">
+            @if (propertyForm.get('baths')?.errors?.['min'] && propertyForm.get('baths')?.touched) {
+              <small class="field-error">Baths can't be negative or 0.</small>
+            }
+          </label>
+           }
+        
+     @else if (propertyForm.get("type")?.value == "a5438594-0818-4ef6-9088-037abba95d76")
+      { <label class="field pf-commercial-field">
+            <span>Office Numbers</span>
+            <input type="number" formControlName="officeNum" min="0">
+            @if (propertyForm.get('officeNum')?.errors?.['min'] && propertyForm.get('officeNum')?.touched) {
+              <small class="field-error">Office numbers can't be negative or 0.</small>
+            }
+          </label>
+
+      }
+      @else{
+          <label class="field pf-residential-field">
+            <span>Beds</span>
+            <input type="number" formControlName="beds" min="0">
+            @if (propertyForm.get('beds')?.errors?.['min'] && propertyForm.get('beds')?.touched) {
+              <small class="field-error">Beds can't be negative or 0.</small>
+            }
+          </label>
+          <label class="field pf-residential-field">
+            <span>Baths</span>
+            <input type="number" formControlName="baths" min="0">
+            @if (propertyForm.get('baths')?.errors?.['min'] && propertyForm.get('baths')?.touched) {
+              <small class="field-error">Baths can't be negative or 0.</small>
+            }
+          </label>
+          <label class="field pf-commercial-field">
+            <span>Office Numbers</span>
+            <input type="number" formControlName="officeNum" min="0">
+            @if (propertyForm.get('officeNum')?.errors?.['min'] && propertyForm.get('officeNum')?.touched) {
+              <small class="field-error">Office numbers can't be negative or 0.</small>
+            }
+          </label>
+      }
+         
+ 
+          <label class="field">
+            <span>Area (sqft)</span>
+            <input type="number" formControlName="area" min="0" step="10">
+            @if (propertyForm.get('area')?.touched) {
+              @if (propertyForm.get('area')?.errors?.['required']) {
+                <small class="field-error">Area is required.</small>
+              } @else if (propertyForm.get('area')?.errors?.['min']) {
+                <small class="field-error">Area must be 0 or more.</small>
+              }
+            }
+          </label>
+ 
+          <label class="field">
+            <span>Price (USD)</span>
+            <input type="number" formControlName="price"  step="1000">
+            @if (propertyForm.get('price')?.touched) {
+              @if (propertyForm.get('price')?.errors?.['required']) {
+                <small class="field-error">Price is required.</small>
+              } @else if (propertyForm.get('price')?.errors?.['min']) {
+                <small class="field-error">Price must be 0 or more.</small>
+              }
+            }
+          </label>
+ 
+          <label class="field">
+            <span>Construction Stage</span>
+            <select formControlName="stage">
+              <option value="">Select Stage</option>
+              @for (s of ConstructionStages(); track s.value) {
+                <option [value]="s.value">{{ s.name }}</option>
+              }
+            </select>
+          </label>
+ 
+          <label class="field">
+            <span>Assigned Agent</span>
+            <select formControlName="owner">
+              <option value="">Select Agent</option>
+              @for (u of users(); track u.id) {
+                <option [value]="u.id">{{ u.fullName }}</option>
+              }
+            </select>
+          </label>
+ 
+          <label class="field field-full">
+            <span>Notes</span>
+            <textarea formControlName="notes"></textarea>
+          </label>
+ 
+          <div class="field">
+            <span>Developer Company</span>
+            <div style="display:flex;gap:6px;">
+              <select formControlName="developer" style="flex:1;">
+                <option value="">Select Developer</option>
+                @for (d of DeveloperCompanies(); track d.id) {
+                  <option [value]="d.id">{{ d.name }}</option>
+                }
+              </select>
+              <button type="button" class="btn btn-ghost btn-sm" title="Add new developer" (click)="IScompanydev.set(true)">+ Dev</button>
+              <button type="button" class="btn btn-ghost btn-sm" title="Delete selected developer" (click)="deleteSelectedDeveloper()">🗑</button>
+            </div>
+ 
+            @if (IScompanydev()) {
+              <div style="display:flex;gap:6px;margin-top:6px;">
+                <input type="text" [formControl]="newDevName" placeholder="e.g. EGYGAB Real Estate"
+                  style="flex:1;padding:7px 10px;border:1px solid var(--border-strong);border-radius:var(--radius-sm);font-size:13px;background:var(--bg-canvas);">
+                <button type="button" class="btn btn-primary btn-sm" (click)="saveNewDeveloper()">Add</button>
+                <button type="button" class="btn btn-ghost btn-sm" (click)="IScompanydev.set(false)">✕</button>
+              </div>
+              @if (newDevName.invalid && newDevName.touched) {
+                <small class="field-error">Please enter a developer name.</small>
+              }
+            }
+          </div>
+ 
+          <label class="field">
+            <span>Expected Commission (%)</span>
+            <input type="number" formControlName="commissionPct" min="0" max="20" step="0.25">
+            @if (propertyForm.get('commissionPct')?.touched) {
+              @if (propertyForm.get('commissionPct')?.errors?.['required']) {
+                <small class="field-error">Commission is required.</small>
+              } @else if (propertyForm.get('commissionPct')?.errors?.['min']) {
+                <small class="field-error">Commission can't be negative or 0.</small>
+              } @else if (propertyForm.get('commissionPct')?.errors?.['max']) {
+                <small class="field-error">Commission can't exceed 20%.</small>
+              }
+            }
+          </label>
+ 
+        </div>
+      </form>
+ 
+      <p style="font-size:11.5px;color:var(--text-tertiary);margin-top:10px;">
+        Status updates automatically: <b>Available</b> with no linked deal, <b>Reserved</b> when an active deal is created, <b>Sold</b> once the linked deal reaches "Done Deal".
+      </p>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" id="prop-cancel" type="button" (click)="onClose.emit()">Cancel</button>
+      <button type="submit" form="property-form" class="btn btn-primary" id="prop-save">
+        {{ isEditMode() ? 'Save Changes' : 'Add Property' }}
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,89 @@
+<div class="modal-overlay" (click)="close()" id="modal-overlay">
+    <!-- إيقاف انتشار الضغطة هنا لمنع إغلاق المودال عند الضغط بداخل الكارت -->
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      
+      <div class="modal-head">
+        <h2>{{ isEditMode ? 'Edit Customer' : 'Add Customer' }}</h2>
+        <button class="modal-close" (click)="close()">
+          <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+        </button>
+      </div>
+     
+      <div class="modal-body">
+
+      
+
+        <form [formGroup]="form" (ngSubmit)="onsubmit()" id="cust-form">
+          <div class="form-grid">
+            <label class="field ">
+              <span>Full Name</span>
+              <input type="text" id="cf-name" placeholder="Enter full name"   formControlName="fullName" >
+              @if (form.get('fullName')?.invalid && form.get('fullName')?.touched) {
+                <small>Full name is required.</small>
+              }
+            </label>
+            
+            <label class="field">
+              <span>Phone</span>
+              <input type="text" id="cf-phone" placeholder="Enter phone number"  formControlName="phone" >
+              @if (form.get('phone')?.invalid && form.get('phone')?.touched) {
+                <small>Enter a valid phone number.</small>
+              }
+            </label>
+            
+            <label class="field ">
+              <span>Type</span>
+             <select
+  id="lead-stage-filter"
+  name="search"
+  class="select-filter"
+  formControlName="customerTag"
+ >
+ 
+  <option [ngValue]="null" >All Stages</option>
+  @for (type of types(); track type.value) {
+    <option [ngValue]="type.value">{{type.label}}</option>
+  }
+</select>
+              @if (form.get('customerTag')?.invalid && form.get('customerTag')?.touched) {
+                <small>Customer type is required.</small>
+              }
+            </label>
+            
+             <label class="field">
+
+            <span>Owner</span>
+
+            <select  formControlName="ownerId">
+
+              <option [ngValue]="null" disabled>Select owner</option>
+
+              @for (owner of owners(); track owner.value) {
+
+                <option [ngValue]="owner.value">{{ owner.label }}</option>
+
+              }
+
+            </select>
+
+          </label>
+    <label class="field field-full">
+
+            <span>Notes</span>
+
+            <textarea id="lf-notes" formControlName="notes"></textarea>
+
+          </label>
+        </div>
+        </form>
+      </div>
+      
+      <div class="modal-foot">
+        <button class="btn btn-ghost" id="cust-cancel" (click)="close()" [disabled]="isSaving()">Cancel</button>
+        <button class="btn btn-primary" id="cust-save" type="submit" form="cust-form" >
+          {{ isSaving() ? 'Saving...' : (isEditMode ? 'Save Changes' : 'Add Customer') }}
+        </button>
+      </div>
+      
+    </div>
+  </div>

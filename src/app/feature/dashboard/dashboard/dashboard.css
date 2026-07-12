@@ -1,0 +1,352 @@
+/* شاشة العرض الرئيسية والأنيميشن الخاص بها */
+.view {
+  animation: fadeIn .2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================================
+   KPI CARDS (صناديق المؤشرات الرئيسية)
+   ============================================================ */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.kpi-card {
+  position: relative;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 20px 20px 18px;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+/* المثلث المائل في الزاوية العلوية اليمنى المميز للتصميم */
+.kpi-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 38px 38px 0;
+  border-color: transparent var(--kpi-accent, var(--gold-100)) transparent transparent;
+}
+
+.kpi-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  margin-bottom: 6px;
+}
+
+.kpi-value {
+  font-family: var(--font-display);
+  font-size: 30px;
+  font-weight: 600;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+/* حالة التحميل للكارد */
+.kpi-card--loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-tertiary);
+  font-style: italic;
+}
+
+/* ============================================================
+   PANELS & GRID (شبكة لوحة التحكم واللوحات)
+   ============================================================ */
+.dash-grid {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 16px;
+}
+
+.panel {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 16px;
+}
+
+/* لوحة عريضة تأخذ العرض الكامل */
+.panel-large {
+  grid-column: 1 / -1;
+}
+
+/* على الشاشات الكبيرة فقط: نخلي أول بانل (Revenue Trend) وتاني بانل
+   (Lead Status) ياخدوا نفس الصف جنب بعض بنسبة 1.6fr/1fr، رغم إن
+   Revenue Trend عليه كلاس panel-large أصلاً. الـ selector ده أعلى في
+   الـ specificity من .panel-large فبيغلبها. لازم يفضل جوه min-width
+   query عشان مايتعارضش مع ترتيب الموبايل تحت. */
+@media (min-width: 1101px) {
+  .dash-grid > .panel:nth-child(1) { grid-column: 1; grid-row: 1; }
+  .dash-grid > .panel:nth-child(2) { grid-column: 2; grid-row: 1; }
+}
+
+.panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.panel-head h3 {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.tag-pill {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: var(--bg-surface-2);
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+.panel-body {
+  padding: 18px 20px;
+}
+
+/* ============================================================
+   CHARTS & SVG (الرسومات البيانية والمؤشرات)
+   ============================================================ */
+.chart-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* مفتاح الرسم البياني (Legend) للدونات شارت */
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  margin-top: 14px;
+  justify-content: center;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.legend-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+/* ============================================================
+   DEAL PIPELINE MINI (مخطط سير الصفقات)
+   ============================================================ */
+.pipeline-mini {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 10px;
+}
+
+.pmini-col {
+  text-align: center;
+}
+
+.pmini-bar-track {
+  height: 120px;
+  display: flex;
+  align-items: flex-end;
+  background: var(--bg-surface-2);
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.pmini-bar {
+  width: 100%;
+  border-radius: 6px 6px 0 0;
+  transition: height .4s ease;
+}
+
+.pmini-count {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.pmini-label {
+  font-size: 10.5px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+  line-height: 1.3;
+}
+
+/* ============================================================
+   TOP AGENTS (أفضل الوكلاء)
+   ============================================================ */
+.top-agents {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.agent-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.agent-rank {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-tertiary);
+  width: 16px;
+}
+
+.agent-row .user-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, var(--gold-400), var(--gold-500));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 11px;
+  color: var(--text-on-gold);
+}
+
+.agent-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.agent-name {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.agent-sub {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  margin-top: 1px;
+}
+
+.agent-bar-track {
+  height: 5px;
+  background: var(--bg-surface-2);
+  border-radius: 4px;
+  margin-top: 4px;
+  overflow: hidden;
+}
+
+.agent-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold-400), var(--gold-500));
+  border-radius: 4px;
+}
+
+.agent-value {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* ============================================================
+   EMPTY STATES (حالة غياب البيانات)
+   ============================================================ */
+.empty-state {
+  text-align: center;
+  padding: 50px 20px;
+  color: var(--text-tertiary);
+  font-size: 13.5px;
+}
+
+/* ============================================================
+   REVENUE PAGER (أزرار التنقل بين الشهور)
+   ============================================================ */
+.revenue-pager {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pager-btn {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-surface, #fff);
+  cursor: pointer;
+  line-height: 1;
+  font-size: 14px;
+  color: var(--text-muted, #6b7280);
+}
+
+.pager-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.pager-btn:not(:disabled):hover {
+  background: var(--bg-muted, #f2f2f2);
+}
+
+/* ============================================================
+   RESPONSIVE DESIGN (التجاوب مع الشاشات)
+   ============================================================ */
+@media (max-width: 1100px) {
+  .kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .dash-grid {
+    grid-template-columns: 1fr;
+  }
+  /* على الموبايل: نقلب ترتيب أول بانلين بس (Lead Status فوق Revenue
+     Trend)، وباقي البانلات (Deal Pipeline, Top Agents) تفضل زي ترتيبها
+     الطبيعي بعدهم. order بس، مفيش لعب في grid-column/grid-row هنا. */
+  .dash-grid > .panel:nth-child(1) { order: 2; } /* Revenue Trend */
+  .dash-grid > .panel:nth-child(2) { order: 1; } /* Lead Status */
+  .dash-grid > .panel:nth-child(3) { order: 3; } /* Deal Pipeline */
+  .dash-grid > .panel:nth-child(4) { order: 4; } /* Top Agents */
+}
+
+@media (max-width: 880px) {
+  .kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 560px) {
+  .kpi-grid {
+    grid-template-columns: 1fr;
+  }
+  .pipeline-mini {
+    grid-template-columns: repeat(4, 1fr); /* تعديل عدد الأعمدة في الشاشات الصغيرة جداً لتفادي ضيق المساحة */
+    gap: 8px;
+  }
+}

@@ -1,0 +1,111 @@
+<section class="view" id="view-developers">
+        <div class="toolbar">
+          <div class="toolbar-left">
+            <div class="search-box">
+  <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 10-.7.7l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0A4.5 4.5 0 1114 9.5 4.5 4.5 0 019.5 14z"></path></svg>
+  <input
+    type="text"
+    class="ring-0 py-0"
+    id="developer-search"
+    placeholder="Search developer companies…"
+    [(ngModel)]="searchTerm"
+    (input)="onSearchInput(searchTerm)"
+  >
+</div>
+          </div>
+          <div class="toolbar-right">
+            <button class="btn btn-primary cursor-pointer" id="add-developer-btn" (click)="openAddModal()">+ Add Developer Company</button>
+          </div>
+        </div>
+        <div class="table-card">
+          <table class="data-table" id="developers-table">
+            <thead>
+              <tr><th>Company</th><th>Phone</th><th>Email</th><th>Properties</th><th>Updated</th><th></th></tr>
+            </thead>
+            <tbody id="developers-tbody">
+  
+              @for (item of developerlist(); track $index) {
+                  <tr data-id="DEV0001">
+      <td><div class="cell-primary">{{item.name}}</div></td>
+      <td>{{item.contactPhone ||"-"}}</td>
+      <td>{{item.contactEmail ||"-"}}</td>
+      <td>{{item.totalProperties}}</td>
+      <td class="cell-sub">{{ (item.createdAt || item.updatedAt)| date:"MM/dd/yyyy"}}</td>
+      <td>
+        <div class="row-actions">
+          <button class="icon-btn cursor-pointer" data-action="edit-developer" data-id="DEV0001" title="Edit"   (click)="openEditModal(item)"><svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 000-1.41l-2.34-2.34a1 1 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"></path></svg></button>
+          <button class="icon-btn danger cursor-pointer" data-action="delete-developer" data-id="DEV0001" title="Delete" (click)="opendeleteModal(item.id)"><svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8a2 2 0 002-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></button>
+        </div>
+      </td>
+    </tr>
+              }
+ 
+   
+  </tbody>
+          </table>
+        </div>
+
+          @if (totalPages() > 0) {
+    <div class="pagination-bar">
+     <div class="pagination-info">
+  Page {{queryFilters.pageNumber}} of {{totalPages()}} — {{totalCount()}} total company
+</div>
+
+      <div class="pagination-controls">
+        <select class="select-filter page-size-select"
+                [(ngModel)]="queryFilters.pageSize"
+                (change)="onPageSizeChange()">
+          <option [ngValue]="10">10 / صفحة</option>
+          <option [ngValue]="25">25 / صفحة</option>
+          <option [ngValue]="50">50 / صفحة</option>
+        </select>
+
+        <button class="icon-btn" [disabled]="queryFilters.pageNumber === 1" (click)="prevPage()">
+          <svg viewBox="0 0 24 24"><path d="M15.5 5L8.5 12l7 7"></path></svg>
+        </button>
+
+        @for (page of pagesArray(); track page) {
+          <button class="page-btn" [class.active]="page === queryFilters.pageNumber"
+                  (click)="goToPage(page)">
+            {{page}}
+          </button>
+        }
+
+        <button class="icon-btn" [disabled]="queryFilters.pageNumber === totalPages()" (click)="nextPage()">
+          <svg viewBox="0 0 24 24"><path d="M8.5 5l7 7-7 7"></path></svg>
+        </button>
+      </div>
+    </div>
+  }
+      </section>
+
+
+      @if (isDeleteModalOpen()) {
+  <div class="modal-overlay" id="modal-overlay" (click)="closeDeleteModal()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <div class="modal-head">
+        <h2>Delete company</h2>
+        <button class="modal-close" (click)="closeDeleteModal()">
+          <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to delete this company? This action can't be undone.</p>
+     
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-ghost" id="del-cancel" (click)="closeDeleteModal()" [disabled]="isDeleting()">Cancel</button>
+        <button class="btn btn-danger" id="del-confirm" (click)="confirmDelete()" [disabled]="isDeleting()">
+          {{ isDeleting() ? 'Deleting…' : 'Delete company' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+@if( isModalOpen())
+{
+    <component-developer-modal
+    [companyselected]="editingcompany()"
+    (onClose)="closeModal()"></component-developer-modal>
+}

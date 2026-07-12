@@ -1,0 +1,369 @@
+/* ============================================================
+   GLOBAL STYLES & LAYOUT (العناصر العامة والأنيميشن)
+   ============================================================ */
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: inherit;
+}
+
+input {
+  font-family: inherit;
+  color: inherit;
+}
+
+svg {
+  display: block;
+}
+
+.view {
+  animation: fadeIn .2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================================
+   TOOLBAR (شريط الفلترة والبحث والأزرار العلوي)
+   ============================================================ */
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+}
+
+.toolbar-left {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.toolbar-right {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  min-width: 240px;
+}
+
+.search-box svg {
+  width: 16px;
+  height: 16px;
+  fill: var(--text-tertiary);
+  flex-shrink: 0;
+}
+
+.search-box input {
+  border: none;
+  background: none;
+  outline: none;
+  font-size: 13.5px;
+  width: 100%;
+  color: var(--text-primary);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 11px 18px;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 600;
+  transition: transform .12s ease, box-shadow .15s ease, background .15s ease;
+  white-space: nowrap;
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn-primary {
+  background: var(--gold-500);
+  color: var(--text-on-gold);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-primary:hover {
+  background: var(--gold-400);
+  box-shadow: var(--shadow-md);
+}
+
+/* ============================================================
+   KANBAN BOARD & COLUMNS (لوحة الكانبان والأعمدة)
+   ============================================================ */
+.kanban-board {
+  display: flex;
+  gap: 24px;
+  overflow-x: auto;
+  padding-bottom: 20px;
+  align-items: flex-start;
+  min-height: 80vh;
+}
+
+.kanban-col {
+  flex: 0 0 350px;
+  background: var(--bg-surface-2);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  max-height: calc(100vh - 220px);
+  display: flex;
+  flex-direction: column;
+}
+
+.kanban-col-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 6px 12px;
+}
+
+.kanban-col-title {
+  font-size: 12.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.kanban-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.kanban-count {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  background: var(--bg-sunken);
+  padding: 1px 7px;
+  border-radius: 10px;
+  color: var(--text-secondary);
+}
+
+.kanban-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  overflow-y: auto;
+  min-height: 40px;
+  flex: 1;
+}
+
+.kanban-col[data-dragover="true"] {
+  outline: 2px dashed var(--gold-400);
+  outline-offset: -4px;
+}
+
+/* ============================================================
+   KANBAN CARDS (كروت المهام)
+   ============================================================ */
+.kanban-card {
+  position: relative;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 12px 12px 11px;
+  box-shadow: var(--shadow-sm);
+  cursor: grab;
+  transition: box-shadow .15s, transform .15s;
+}
+
+.kanban-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.kanban-card:active {
+  cursor: grabbing;
+}
+
+.kanban-card.dragging {
+  opacity: .4;
+}
+
+.kanban-card-title {
+  font-weight: 600;
+  font-size: 13.5px;
+  margin-bottom: 4px;
+  padding-right: 6px;
+}
+
+.kanban-card-sub {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.kanban-card-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 8px;
+}
+
+/* ============================================================
+   AVATARS & BADGES (الأفاتار الصغير وعناصر البيانات الفرعية)
+   ============================================================ */
+.mini-avatar {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  font-size: 10px;
+  background: linear-gradient(135deg, var(--gold-400), var(--gold-500));
+  color: var(--text-on-gold);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.cell-sub {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  margin-top: 2px;
+}
+
+.entity-meta {
+  font-size: 10.5px;
+  color: var(--text-tertiary);
+  margin-top: 6px;
+}
+
+/* ============================================================
+   PRIORITY PILLS (حبوب تحديد الأولوية)
+   ============================================================ */
+.priority-pill {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 20px;
+}
+
+.priority-High {
+  background: var(--danger-100);
+  color: var(--danger-600);
+}
+
+.priority-Medium {
+  background: var(--warn-100);
+  color: var(--warn-600);
+}
+
+.priority-Low {
+  background: var(--info-100);
+  color: var(--info-600);
+}.pagination-bar {
+  flex:0 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 4px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.pagination-info {
+  font-size: 13px;
+  color: var(--text-muted, #6b7280);
+}
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.page-btn {
+  min-width: 32px;
+  height: 32px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.page-btn {
+  min-width: 32px;
+  height: 32px;
+  border: 1px solid #e5e7eb;
+  background: var(--color-pagination);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.page-btn.active {
+  background: var(--primary, #7A5AF8);
+  color: #fff;
+  border-color: var(--primary, #7A5AF8);
+}
+
+.page-size-select {
+  height: 36px;
+}
+input,select,textarea{font-family:inherit;color:inherit;}
+
+.select-filter{
+  padding:9px 12px;border-radius:var(--radius-sm);
+  border:1px solid var(--border-subtle);background:var(--bg-surface);
+  font-size:13px;color:var(--text-primary);
+}
+
+
+
+@media (max-width: 768px) {
+  .kanban-board {
+    flex-direction: column; /* تحويل الترتيب من أفقي إلى رأسي */
+    align-items: stretch;   /* جعل الأعمدة تأخذ العرض الكامل */
+  }
+
+  .kanban-col {
+    flex: 1 1 auto;        /* إلغاء العرض الثابت والسماح للمحتوى بالتمدد */
+    max-height: none;      /* إلغاء تحديد الارتفاع الأقصى لتفادي مشاكل التمرير الداخلي */
+  }
+}
+
+
+@media (max-width: 576px) {
+  .toolbar-left, 
+  .toolbar-right,
+  .search-box {
+    width: 100%; /* جعل كل قسم يأخذ السطر بالكامل */
+  }
+  
+  .btn {
+    flex: 1; /* جعل الأزرار تتوزع بالتساوي على عرض الشاشة */
+  }
+}
+
+@media (max-width: 480px) {
+  .pagination-bar {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+}

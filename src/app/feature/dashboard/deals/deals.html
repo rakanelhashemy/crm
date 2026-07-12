@@ -1,0 +1,128 @@
+<section class="view" id="view-deals">
+        <div class="toolbar">
+           <div class="toolbar-left">
+      <div class="search-box">
+        <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 10-.7.7l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0A4.5 4.5 0 1114 9.5 4.5 4.5 0 019.5 14z"></path></svg>
+        <input type="text"  id="lead-search" class="ring-0 py-0" placeholder="Search leads by name, phone…"
+               [(ngModel)]="queryFilters.search" (input)="onFilterChange()">
+      </div>
+
+   <select id="lead-stage-filter" class="select-filter"
+        [(ngModel)]="queryFilters.stage" (change)="onFilterChange()">
+  <option [ngValue]="null">All Stages</option>
+  @for (status of statuses(); track status.value) {
+    <option [ngValue]="status.value">{{status.label}}</option>
+  }
+</select>
+
+
+    </div>
+          <div class="toolbar-right">
+         
+            <button class="btn btn-primary" id="add-deal-btn" (click)=" openAddModal()">+ Add Deal</button>
+          </div>
+        </div>
+
+        <div id="deals-table-wrap">
+          <div class="table-card">
+            <table class="data-table" id="deals-table">
+              <thead>
+                <tr>
+                  <th>Property</th><th>Client</th><th>Stage</th><th>Property Value</th><th>Commission Earned</th><th>Agent</th><th></th>
+                </tr>
+              </thead>
+              <tbody id="deals-tbody">
+   
+                 @for (item of Dealslist() ; track $index) {
+                     <tr >
+      <td><div class="cell-primary">{{item.regionName}}</div><div class="cell-sub"> {{item.propertyTypeName}}</div></td>
+      <td>{{item.customerName}}</td>
+       <td><span class="status-pill"
+            [style.background]="'color-mix(in srgb, ' + getStatusColor(item.stage) + ' 16%, transparent)'"
+            [style.color]="getStatusColor(item.stage)"
+            style="margin-bottom:16px;">
+        {{ item.stageLabel }}
+      </span></td>
+      <td class="cell-mono  bold">${{item.value}}</td>
+      <td class="cell-mono"><span class="cell-sub text-sm var(--text-on-gold)">{{item.actualCommissionValue}}</span></td>
+      <td><div class="owner-cell"><div class="mini-avatar">{{item.agentName |nameavtar}}</div><span>{{item.agentName }}</span></div></td>
+      <td>
+        <div class="row-actions">
+          <button class="icon-btn" data-action="edit-deal"  title="Edit" (click)=" openEditModal(item.id)"><svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 000-1.41l-2.34-2.34a1 1 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"></path></svg></button>
+          <button class="icon-btn danger" data-action="delete-deal"  title="Delete"  (click)="$event.stopPropagation(); opendeleteModal(item.id)"><svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8a2 2 0 002-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></button>
+        </div>
+      </td>
+    </tr>
+                }
+
+  
+
+
+</tbody>
+            </table>
+          </div>
+        </div>
+         @if (totalPages() > 0) {
+    <div class="pagination-bar">
+     <div class="pagination-info">
+  Page {{queryFilters.pageNumber}} of {{totalPages()}} — {{totalCount()}} total Deals
+</div>
+
+      <div class="pagination-controls">
+        <select class="select-filter page-size-select"
+                [(ngModel)]="queryFilters.pageSize"
+                (change)="onPageSizeChange()">
+          <option [ngValue]="10">10 / صفحة</option>
+          <option [ngValue]="25">25 / صفحة</option>
+          <option [ngValue]="50">50 / صفحة</option>
+        </select>
+
+        <button class="icon-btn" [disabled]="queryFilters.pageNumber === 1" (click)="prevPage()">
+          <svg viewBox="0 0 24 24"><path d="M15.5 5L8.5 12l7 7"></path></svg>
+        </button>
+
+        @for (page of pagesArray(); track page) {
+          <button class="page-btn" [class.active]="page === queryFilters.pageNumber"
+                  (click)="goToPage(page)">
+            {{page}}
+          </button>
+        }
+
+        <button class="icon-btn" [disabled]="queryFilters.pageNumber === totalPages()" (click)="nextPage()">
+          <svg viewBox="0 0 24 24"><path d="M8.5 5l7 7-7 7"></path></svg>
+        </button>
+      </div>
+    </div>
+  }
+      </section>
+
+
+      @if (isDeleteModalOpen()) {
+  <div class="modal-overlay" id="modal-overlay" (click)="closeDeleteModal()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <div class="modal-head">
+        <h2>Delete Lead</h2>
+        <button class="modal-close" (click)="closeDeleteModal()">
+          <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to delete this deal? This action can't be undone.</p>
+     
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-ghost" id="del-cancel" (click)="closeDeleteModal()" [disabled]="isDeleting()">Cancel</button>
+        <button class="btn btn-danger" id="del-confirm" (click)="confirmDelete()" [disabled]="isDeleting()">
+          {{ isDeleting() ? 'Deleting…' : 'Delete Lead' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+@if (isModalOpen()) {
+
+  <component-deal-modal
+   [dealID]="editingdealId()"
+    (onClose)="closeModal()"></component-deal-modal>
+}

@@ -1,0 +1,630 @@
+/* ============================================================
+   PROPERTIES CONTAINER & GRID AREA
+   ============================================================ */
+/* حاوية كروت العقارات: تعرض الكروت في شبكة مرنة وسريعة الاستجابة */
+#properties-grid-wrap {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 16px;
+  margin-top: 18px;
+}
+
+/* في حالة تفعيل عرض الجدول (Table View) لو محتاجه مستقبلاً */
+#properties-grid-wrap.table-active {
+  display: block;
+}
+
+/* ============================================================
+   PROPERTIES CARDS SPECIFICS
+   ============================================================ */
+.property-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  transition: box-shadow .15s ease, transform .15s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.property-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+/* البانر العلوي للكارت ويحتوي على لون المرحلة بالـ Variable الممرر في الـ HTML */
+.property-card-banner {
+  position: relative;
+  height: 90px;
+  padding: 14px 16px;
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--ink-800), var(--ink-900));
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+/* المثلث الملون في الزاوية العلوية اليمنى بناءً على الـ Stage-color */
+.property-card-banner::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 48px 48px 0;
+  border-color: transparent var(--stage-color, var(--gold-500)) transparent transparent;
+  opacity: .92;
+}
+
+/* الأيقونة داخل البانر فوق المثلث */
+.property-card-banner-icon {
+  position: absolute;
+  top: 9px;
+  right: 6px;
+  width: 16px;
+  height: 16px;
+  fill: var(--text-on-ink);
+  z-index: 1;
+  opacity: .9;
+}
+
+.property-card-project {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 14.5px;
+  color: var(--text-on-ink);
+  position: relative;
+  z-index: 1;
+  line-height: 1.25;
+}
+
+.property-card-unit {
+  font-size: 11.5px;
+  color: rgba(242, 239, 231, .65);
+  position: relative;
+  z-index: 1;
+  margin-top: 2px;
+}
+
+/* جسم الكارت الداخلي */
+.property-card-body {
+  padding: 14px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.property-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.property-card-address {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  margin-top: 2px;
+}
+
+/* المواصفات (المكاتب، المساحة) */
+.property-card-specs {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  margin: 6px 0;
+}
+
+.property-card-specs span:nth-child(even) {
+  color: var(--border-strong);
+  font-weight: bold;
+}
+
+/* تذييل الكارت والسعر */
+.property-card-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-top: auto; /* يدفع السعر لأسفل الكارت دائماً */
+  padding-top: 12px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.property-card-price {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--gold-500);
+}
+
+/* بيانات المنشئ والمعدل */
+.entity-meta {
+  font-size: 10.5px;
+  color: var(--text-tertiary);
+  margin-top: 6px;
+  line-height: 1.2;
+}
+
+/* ============================================================
+   GLOBAL STYLES & LAYOUT (المستخدمة في الهيكل العام)
+   ============================================================ */
+.hidden {
+  display: none !important;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: inherit;
+}
+
+input, select, textarea {
+  font-family: inherit;
+  color: inherit;
+}
+
+svg {
+  display: block;
+}
+
+.view {
+  animation: fadeIn .2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================================
+   TOOLBAR & FILTERS (شريط الأدوات، الفلاتر، والبحث)
+   ============================================================ */
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+}
+
+.toolbar-left {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.toolbar-right {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 0 12px;
+  min-width: 240px;
+  
+}
+
+.search-box svg {
+  width: 16px;
+  height: 16px;
+  fill: var(--text-tertiary);
+  flex-shrink: 0;
+}
+
+.search-box input {
+  border: none;
+  background: none;
+  outline: none;
+  font-size: 13.5px;
+  width: 100%;
+  color: var(--text-primary);
+}
+
+.select-filter {
+  padding: 9px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-surface);
+  font-size: 13px;
+  color: var(--text-primary);
+}
+
+.view-toggle {
+  display: flex;
+  background: var(--bg-surface-2);
+  border-radius: var(--radius-sm);
+  padding: 3px;
+}
+
+.vtoggle-btn {
+  padding: 7px 14px;
+  font-size: 12.5px;
+  font-weight: 600;
+  border-radius: 6px;
+  color: var(--text-secondary);
+}
+
+.vtoggle-btn.active {
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ============================================================
+   BUTTONS (الأزرار)
+   ============================================================ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 11px 18px;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 600;
+  transition: transform .12s ease, box-shadow .15s ease, background .15s ease;
+  white-space: nowrap;
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn-primary {
+  background: var(--gold-500);
+  color: var(--text-on-gold);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-primary:hover {
+  background: var(--gold-400);
+  box-shadow: var(--shadow-md);
+}
+
+/* ============================================================
+   PROPERTY CARDS GRID (تنسيق شبكة العقارات والكروت)
+   ============================================================ */
+/* حاوية الكروت */
+#properties-grid-wrap {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 16px;
+}
+
+.property-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  transition: box-shadow .15s, transform .15s;
+}
+
+.property-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.property-card-banner {
+  position: relative;
+  height: 86px;
+  padding: 12px 14px;
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--ink-800), var(--ink-900));
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.property-card-banner::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 48px 48px 0;
+  border-color: transparent var(--stage-color, var(--gold-500)) transparent transparent;
+  opacity: .92;
+}
+
+.property-card-banner-icon {
+  position: absolute;
+  top: 9px;
+  right: 6px;
+  width: 16px;
+  height: 16px;
+  fill: var(--text-on-ink);
+  z-index: 1;
+  opacity: .9;
+}
+
+.property-card-project {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 14.5px;
+  color: var(--text-on-ink);
+  position: relative;
+  z-index: 1;
+  line-height: 1.25;
+}
+
+.property-card-unit {
+  font-size: 11.5px;
+  color: rgba(242, 239, 231, .65);
+  position: relative;
+  z-index: 1;
+  margin-top: 2px;
+}
+
+.property-card-body {
+  padding: 14px 16px 16px;
+}
+
+.property-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.property-card-address {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  margin-top: 2px;
+}
+
+.property-card-specs {
+  display: flex;
+  gap: 6px;
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  margin: 8px 0 0;
+}
+
+.property-card-specs span:nth-child(even) {
+  color: var(--border-strong);
+}
+
+.property-card-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.property-card-price {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--gold-500);
+}
+
+/* ============================================================
+   TEXT UTILITES & METADATA (النصوص التوضيحية والبيانات الفرعية)
+   ============================================================ */
+.cell-primary {
+  font-weight: 600;
+}
+
+.cell-sub {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  margin-top: 2px;
+}
+
+.entity-meta {
+  font-size: 10.5px;
+  color: var(--text-tertiary);
+  margin-top: 6px;
+}
+
+/* ============================================================
+   STATUS PILLS (حالات العقار)
+   ============================================================ */
+.status-pill {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 4px 10px 4px 16px;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+
+.status-pill::before {
+  content: "";
+  position: absolute;
+  left: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.icon-btn svg{width:15px;height:15px;fill:currentColor;}
+.icon-btn.danger:hover{color:var(--danger-600);background:var(--danger-100);}
+.row-actions{display:flex;gap:6px;justify-content:flex-end;}
+.icon-btn{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;color:var(--text-tertiary);}
+.icon-btn:hover{background:var(--bg-sunken);color:var(--text-primary);}
+.status-Available{background:var(--info-100);color:var(--info-600);}
+.status-Reserved{background:var(--warn-100);color:var(--warn-600);}
+.status-Sold{background:var(--success-100);color:var(--success-600);}
+
+.pagination-bar {
+  flex:0 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 4px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.pagination-info {
+  font-size: 13px;
+  color: var(--text-muted, #6b7280);
+}
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.page-btn {
+  min-width: 32px;
+  height: 32px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.page-btn.active {
+  background: var(--primary, #7A5AF8);
+  color: #fff;
+  border-color: var(--primary, #7A5AF8);
+}
+
+.page-size-select {
+  height: 36px;
+}
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(13,20,32,0.55);
+  backdrop-filter:blur(2px);
+  display:flex;align-items:center;justify-content:center;
+  z-index:100;padding:20px;
+  animation:fadeIn .15s ease;
+}
+.modal-card{
+  background:var(--bg-surface);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-lg);
+  width:min(560px,100%);
+  max-height:88vh;overflow-y:auto;
+  border:1px solid var(--border-subtle);
+}
+.modal-head{display:flex;align-items:center;justify-content:space-between;padding:20px 24px;border-bottom:1px solid var(--border-subtle);position:sticky;top:0;background:var(--bg-surface);z-index:1;}
+.modal-head h2{font-family:var(--font-display);font-size:19px;font-weight:600;}
+.modal-close{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--text-tertiary);}
+.modal-close:hover{background:var(--bg-surface-2);color:var(--text-primary);}
+.modal-close svg{width:16px;height:16px;fill:currentColor;}
+.modal-body{padding:22px 24px;}
+.modal-foot{display:flex;justify-content:flex-end;gap:10px;padding:18px 24px;border-top:1px solid var(--border-subtle);}
+
+/* الأزرار المذكورة */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  padding:11px 18px;border-radius:var(--radius-sm);
+  font-size:14px;font-weight:600;
+  transition:transform .12s ease, box-shadow .15s ease, background .15s ease;
+  white-space:nowrap;
+}
+.btn:active{transform:translateY(1px);}
+.btn-ghost{background:transparent;color:var(--text-secondary);border:1px solid var(--border-subtle);}
+.btn-ghost:hover{background:var(--bg-surface-2);color:var(--text-primary);}
+.btn-danger{background:var(--danger-100);color:var(--danger-600);}
+.btn-danger:hover{background:var(--danger-600);color:#fff;}
+.detail-section {
+    margin-bottom: 20px;
+}
+
+.detail-section:last-of-type {
+    margin-bottom: 0;
+}
+
+.detail-section h4 {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--text-tertiary, #94a3b8);
+    letter-spacing: 0.05em;
+    margin-bottom: 10px;
+    border-bottom: 1px solid var(--border-subtle, #f1f5f9);
+    padding-bottom: 6px;
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    font-size: 13.5px;
+}
+
+.detail-row:not(:last-child) {
+    border-bottom: 1px dashed var(--border-subtle, #f1f5f9);
+}
+
+.dlabel {
+    color: var(--text-secondary, #64748b);
+}
+
+.dval {
+    color: var(--text-primary, #1e293b);
+    font-weight: 500;
+}
+
+.pagination-bar {
+  flex:0 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 4px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.pagination-info {
+  font-size: 13px;
+  color: var(--text-muted, #6b7280);
+}
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.page-btn {
+  min-width: 32px;
+  height: 32px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.page-btn.active {
+  background: var(--primary, #7A5AF8);
+  color: #fff;
+  border-color: var(--primary, #7A5AF8);
+}

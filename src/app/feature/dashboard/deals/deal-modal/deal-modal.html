@@ -1,0 +1,138 @@
+<div class="modal-overlay">
+  <div class="modal-card">
+    <div class="modal-head">
+      <h2>{{ dealID ? 'Edit Deal' : 'Add New Deal' }}</h2>
+      <button class="modal-close" (click)="cancel()">
+        <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+      </button>
+    </div>
+
+
+      <div class="modal-body">
+        <form [formGroup]="dealForm">
+          <div class="form-grid">
+
+            <!-- PROPERTY: input + datalist -->
+            <label class="field field-full">
+              <span>Property <span style="font-size:11px;color:var(--text-tertiary);font-weight:400;">(Available only)</span></span>
+              <input
+                type="text"
+                list="property-options"
+                placeholder="Search unit or region…"
+                [value]="propertyText()"
+                (input)="onPropertyInput($any($event.target).value)"
+                autocomplete="off"
+              />
+              <datalist id="property-options">
+                @for (p of Property(); track p.id) {
+                  <option [value]="propertyLabel(p)"></option>
+                }
+              </datalist>
+              @if (dealForm.controls.propertyId.touched && !dealForm.controls.propertyId.value) {
+                <small style="color:var(--danger-500,#e05252);">Select a valid property from the list</small>
+              }
+            </label>
+
+            <!-- CUSTOMER: input + datalist -->
+            <label class="field">
+              <span>Customer</span>
+              <input
+                type="text"
+                list="customer-options"
+                placeholder="Search customer…"
+                [value]="customerText()"
+                (input)="onCustomerInput($any($event.target).value)"
+                autocomplete="off"
+              />
+              <datalist id="customer-options">
+                @for (c of customers(); track c.id) {
+                  <option [value]="customerLabel(c)"></option>
+                }
+              </datalist>
+              @if (dealForm.controls.customerId.touched && !dealForm.controls.customerId.value) {
+                <small style="color:var(--danger-500,#e05252);">Select a valid customer from the list</small>
+              }
+            </label>
+
+            <!-- STAGE: update mode only -->
+          @if (dealID) {
+  <label class="field">
+    <span>Stage</span>
+    <select formControlName="stage">
+      <option [ngValue]="null">Select Stage</option>
+      @for (s of statuses(); track s.value) {
+        <option [ngValue]="s.value">{{ s.label }}</option>
+      }
+    </select>
+  </label>
+}
+
+            <label class="field">
+              <span>Agent</span>
+              <select formControlName="agentId">
+                <option [ngValue]="null">Select Agent</option>
+                @for (u of users(); track u.id) {
+                  <option [ngValue]="u.id">{{ u.fullName || u.name }}</option>
+                }
+              </select>
+            </label>
+
+           <label class="field">
+  <span>Deal Value (USD)</span>
+  <input type="number" formControlName="value" min="1" step="1000">
+  @if (dealForm.controls.value.touched && dealForm.controls.value.invalid) {
+    <small style="color:var(--danger-500,#e05252);">
+      @if (dealForm.controls.value.errors?.['required']) {
+        Deal value is required
+      } @else if (dealForm.controls.value.errors?.['min']) {
+        Deal value must be greater than 0
+      }
+    </small>
+  }
+</label>
+
+<label class="field">
+  <span>Commission (%)</span>
+  <div style="display:flex;gap:6px;align-items:center;">
+    <input type="number" formControlName="commissionPct" min="0.01" max="30" step="0.25" style="flex:1;">
+    <button type="button" class="btn btn-ghost btn-sm" (click)="useCommissionFromProperty()" title="Use property's expected commission %">↺ From Property</button>
+  </div>
+  @if (dealForm.controls.commissionPct.touched && dealForm.controls.commissionPct.invalid) {
+    <small style="color:var(--danger-500,#e05252);">
+      @if (dealForm.controls.commissionPct.errors?.['required']) {
+        Commission is required
+      } @else if (dealForm.controls.commissionPct.errors?.['min']) {
+        Commission must be greater than 0
+      } @else if (dealForm.controls.commissionPct.errors?.['max']) {
+        Commission cannot exceed 30%
+      }
+    </small>
+  }
+</label>
+
+            <div class="field field-full" style="background:var(--bg-surface-2);border:1px solid var(--border-subtle);border-radius:var(--radius-sm);padding:14px 16px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+                <div>
+                  <div class="label-caps">Property Value</div>
+                  <div class="value-mono">${{ (propertyValueDisplay() | number)|| 0 }}</div>
+                </div>
+                <div style="text-align:right;">
+                  <div class="label-caps">Commission Earned</div>
+                  <div class="value-mono gold">${{ commissionEarnedDisplay() | number:'1.0-2' }}</div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </form>
+      </div>
+
+
+    <div class="modal-foot">
+      <button class="btn btn-ghost" (click)="cancel()" [disabled]="isSaving()">Cancel</button>
+      <button class="btn btn-primary" (click)="save()" [disabled]="isSaving() || isLoading()">
+        {{ isSaving() ? 'Saving…' : (dealID ? 'Save Changes' : 'Create Deal') }}
+      </button>
+    </div>
+  </div>
+</div>
