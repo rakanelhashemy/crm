@@ -20,8 +20,8 @@ export class LoginComponent {
 
  show = false;
     loginsub= new Subscription();
-
-passwordPattern = /^(?=.*[a-z])(?=.*\d)(?=.*[!@#$%&*]).{6,}$/;
+// Combined pattern for: Min 6 chars, 1 lowercase, 1 digit
+passwordPattern = /^(?=.*[a-z])(?=.*\d).{6,}$/;
 loginForm = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(6) ,Validators.pattern(this.passwordPattern)]],
