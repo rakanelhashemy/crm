@@ -1,4 +1,4 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
@@ -46,4 +46,9 @@ getLeadList(filters: any = {}): Observable<any> {
   convertLead(id: string): Observable<any> {
     return this.httpClient.post(environment.baseUrl + `lead/${id}/convert`, {});
   }
+importLeadsExcel(file: File) {
+  const formData = new FormData();
+  formData.append('file', file);
+  return this.httpClient.post(`${environment.baseUrl}Lead/ImportExcel`, formData);
+}
 }

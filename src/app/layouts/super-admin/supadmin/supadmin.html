@@ -34,13 +34,12 @@
       <div class="nav-item cursor-pointer" routerLink="/properties" routerLinkActive="active" data-view="properties" (click)="closeSidebar()">
         <svg viewBox="0 0 24 24"><path d="M5 21V3h8v6h6v12H5zm2-2h4v-2H7v2zm0-4h4v-2H7v2zm0-4h4V7H7v4zm6 8h4v-2h-4v2zm0-4h4v-2h-4v2z"></path></svg>
         <span>Properties</span>
-        <span class="nav-badge" id="nav-badge-properties">9</span>
       </div>
 
       <div class="nav-item cursor-pointer" routerLink="/leads" routerLinkActive="active" data-view="leads" (click)="closeSidebar()">
         <svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 8 1.34 8 4v2H4v-2c0-2.66 5.3-4 8-4zm0-2a4 4 0 110-8 4 4 0 010 8z"></path></svg>
         <span>Leads</span>
-        <span class="nav-badge" id="nav-badge-leads">49</span>
+    
       </div>
 
       <div class="nav-item cursor-pointer" routerLink="/customers" routerLinkActive="active" data-view="customers" (click)="closeSidebar()">
@@ -75,41 +74,22 @@
     </nav>
 
     <div class="sidebar-footer">
-      <div class="notification-wrapper">
-  <button (click)="toggleNotifications()" class="notification-btn" id="notification-btn" title="الإشعارات" [attr.aria-expanded]="notificationsOpen()">
+ 
+<div class="notification-wrapper">
+  <button (click)="onBellClick($event)" class="notification-btn" id="notification-btn" title="الإشعارات" [attr.aria-expanded]="notificationService.notificationsOpen()">
     <svg viewBox="0 0 24 24">
       <path d="M12 2a6 6 0 00-6 6v3.09c0 .55-.22 1.08-.6 1.47L4 14v2h16v-2l-1.4-1.44a2.08 2.08 0 01-.6-1.47V8a6 6 0 00-6-6zm0 20a2.5 2.5 0 002.45-2h-4.9A2.5 2.5 0 0012 22z" fill="currentColor"></path>
     </svg>
-    @if (unreadNotifications() > 0) {
-      <span class="notification-badge" id="notification-badge">{{ unreadNotifications() }}</span>
+    @if (notificationService.unreadCount() > 0) {
+      <span class="notification-badge" id="notification-badge">{{ notificationService.unreadCount() }}</span>
     }
   </button>
 
-  @if (notificationsOpen()) {
-    <div class="notification-panel" id="notification-panel">
-      <div class="notification-panel-header">
-        <span>notification</span>
-        @if (unreadNotifications() > 0) {
-          <button class="mark-read-btn" (click)="markAllAsRead()"> All Read</button>
-        }
-      </div>
-
-      <div class="notification-list">
-        @for (item of notifications(); track item.id) {
-          <div class="notification-item" [class.unread]="!item.read">
-            <span class="notification-dot"></span>
-            <div class="notification-content">
-              <p class="notification-text">{{ item.text }}</p>
-              <span class="notification-time">{{ item.time }}</span>
-            </div>
-          </div>
-        } @empty {
-          <div class="notification-empty">مفيش إشعارات جديدة</div>
-        }
-      </div>
-    </div>
-  }
+  <component-notification></component-notification>
 </div>
+
+
+
       <button (click)="toggleTheme()" class="theme-toggle" id="theme-toggle" title="Toggle theme" [attr.aria-pressed]="theme() === 'dark'">
         <svg class="icon-sun" viewBox="0 0 24 24"><path d="M12 7a5 5 0 100 10 5 5 0 000-10zm0-5a1 1 0 011 1v2a1 1 0 11-2 0V3a1 1 0 011-1zm0 18a1 1 0 011 1v2a1 1 0 11-2 0v-2a1 1 0 011-1zM4.22 4.22a1 1 0 011.42 0l1.4 1.42a1 1 0 11-1.4 1.4l-1.42-1.4a1 1 0 010-1.42zm12.74 12.74a1 1 0 011.42 0l1.4 1.42a1 1 0 11-1.4 1.4l-1.42-1.4a1 1 0 010-1.42zM2 12a1 1 0 011-1h2a1 1 0 110 2H3a1 1 0 01-1-1zm18 0a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1zM4.22 19.78a1 1 0 010-1.42l1.4-1.4a1 1 0 111.4 1.4l-1.4 1.42a1 1 0 01-1.4 0zm12.74-12.74a1 1 0 010-1.42l1.4-1.4a1 1 0 111.4 1.4l-1.4 1.42a1 1 0 01-1.4 0z"></path></svg>
         <svg class="icon-moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path></svg>

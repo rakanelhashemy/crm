@@ -25,6 +25,8 @@
     </div>
 
     <div class="toolbar-right">
+<button class="btn btn-space" id="add-lead-excel-btn" (click)="openExcelModal()">+ Add Lead excel</button>
+
       <button class="btn btn-primary" id="add-lead-btn" (click)="openAddModal()">+ Add Lead</button>
     </div>
   </div>
@@ -208,13 +210,89 @@
       </div>
     </div>
     <div class="modal-foot flex ">
-      <button class="btn btn-ghost" id="detail-close" (click)="closeLeadView()">Close</button>
+      <button class="btn btn-ghost btn-1234" id="detail-close" (click)="closeLeadView()">Close</button>
      <div>
-       <button class="btn   btn-space " id="detail-edit" (click)="convertLead(lead.id)">Convert Lead</button>
+       <button class="btn   btn-space " id="detail-convert" (click)="convertLead(lead.id)">Convert Lead</button>
 
        <button class="btn btn-primary" id="detail-edit" (click)="editFromView()">Edit Lead</button>
      </div>
     </div>
   </div>
 </div>
+}
+
+
+@if (isExcelModalOpen()) {
+  <div class="modal-overlay" (click)="cancel()">
+    <div class="modal-card" dir="rtl" (click)="$event.stopPropagation()">
+      <div class="modal-head">
+        <h2>رفع ملف إكسل</h2>
+        <button class="modal-close" aria-label="إغلاق" (click)="cancel()">
+          <svg viewBox="0 0 24 24"><path d="M18.3 5.71 12 12l6.3 6.29-1.41 1.41L10.59 13.4 4.3 19.7l-1.41-1.41L9.19 12 2.89 5.71 4.3 4.3l6.29 6.3 6.3-6.3z"/></svg>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <p class="modal-subtitle">اختر ملف Excel أو اسحبه هنا لرفعه.</p>
+
+        @if (!selectedFile) {
+          <label
+            class="dropzone"
+            [class.dragging]="isDragging"
+            (dragover)="onDragOver($event)"
+            (dragleave)="onDragLeave($event)"
+            (drop)="onDrop($event)"
+          >
+            <div class="dropzone-icon"></div>
+            <span class="dropzone-title">اسحب الملف هنا أو اضغط للاختيار</span>
+            <span class="dropzone-hint">
+              {{ acceptedExtensions.join('، ') }} — حتى {{ maxSizeMb }} ميجابايت
+            </span>
+            <input
+              type="file"
+              [accept]="acceptedExtensions.join(',')"
+              (change)="onFileSelected($event)"
+              hidden
+            />
+          </label>
+        } @else {
+          <div class="detail-section">
+            <h4>الملف المختار</h4>
+            <div class="detail-row">
+              <span class="dlabel">الاسم</span>
+              <span class="dval file-name-val">{{ selectedFile.name }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="dlabel">الحجم</span>
+              <span class="dval">{{ fileSizeLabel }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="dlabel">النوع</span>
+              <span class="dval">{{ fileExtensionLabel }}</span>
+            </div>
+          </div>
+          <button class="link-btn" (click)="removeFile()" [disabled]="isUploading()">
+            إزالة الملف واختيار آخر
+          </button>
+        }
+
+        @if (errorMessage) {
+          <p class="error-message">{{ errorMessage }}</p>
+        }
+      </div>
+
+      <div class="modal-foot">
+        <button class="btn btn-danger" (click)="cancel()" [disabled]="isUploading()">
+          إلغاء
+        </button>
+        <button
+          class="btn btn-primary"
+          [disabled]="!selectedFile || isUploading()"
+          (click)="confirmUpload()"
+        >
+          {{ isUploading() ? 'جارٍ الرفع…' : 'رفع الملف' }}
+        </button>
+      </div>
+    </div>
+  </div>
 }
