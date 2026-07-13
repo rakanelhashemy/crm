@@ -7,21 +7,21 @@
                [(ngModel)]="queryFilters.search" (input)="onFilterChange()">
       </div>
 
-   <select id="lead-stage-filter" class="select-filter"
-        [(ngModel)]="queryFilters.status" (change)="onFilterChange()">
-  <option [ngValue]="null">All Stages</option>
-  @for (status of statuses(); track status.value) {
-    <option [ngValue]="status.value">{{status.label}}</option>
-  }
-</select>
+      <select id="lead-stage-filter" class="select-filter"
+           [(ngModel)]="queryFilters.status" (change)="onFilterChange()">
+        <option [ngValue]="null">All Stages</option>
+        @for (status of statuses(); track status.value) {
+          <option [ngValue]="status.value">{{status.label}}</option>
+        }
+      </select>
 
-<select id="lead-source-filter" class="select-filter"
-        [(ngModel)]="queryFilters.source" (change)="onFilterChange()">
-  <option [ngValue]="null">All Sources</option>
-  @for (source of sources(); track source.value) {
-    <option [ngValue]="source.value">{{source.label}}</option>
-  }
-</select>
+      <select id="lead-source-filter" class="select-filter"
+              [(ngModel)]="queryFilters.source" (change)="onFilterChange()">
+        <option [ngValue]="null">All Sources</option>
+        @for (source of sources(); track source.value) {
+          <option [ngValue]="source.value">{{source.label}}</option>
+        }
+      </select>
     </div>
 
     <div class="toolbar-right">
@@ -39,7 +39,7 @@
         </thead>
         <tbody id="leads-tbody">
           @for (lead of leads(); track lead.id) {
-            <tr [attr.data-id]="lead.id"  (click)="viewLead(lead.id)">
+            <tr [attr.data-id]="lead.id" (click)="viewLead(lead.id)">
               <td>
                 <div class="cell-primary">{{lead.fullName || "-"}}</div>
                 <div class="cell-sub">{{lead.propertyTypeName || "-"}}</div>
@@ -76,25 +76,26 @@
               </td>
             </tr>
           }
-        @empty {
-  <tr class="empty-row">
-    <td colspan="8">
-      <div class="empty-state">
-        <div class="empty-state-title">No leads match your filters</div>
-        <div class="empty-state-sub">Try adjusting search or filter criteria.</div>
-      </div>
-    </td>
-  </tr>
-}
+          @empty {
+            <tr class="empty-row">
+              <td colspan="8">
+                <div class="empty-state">
+                  <div class="empty-state-title">No leads match your filters</div>
+                  <div class="empty-state-sub">Try adjusting search or filter criteria.</div>
+                </div>
+              </td>
+            </tr>
+          }
         </tbody>
       </table>
     </div>
   </div>
+
   @if (totalPages() > 0) {
     <div class="pagination-bar">
-     <div class="pagination-info">
-  Page {{queryFilters.pageNumber}} of {{totalPages()}} — {{totalCount()}} total leads
-</div>
+      <div class="pagination-info">
+        Page {{currentPage()}} of {{totalPages()}} — {{totalCount()}} total leads
+      </div>
 
       <div class="pagination-controls">
         <select class="select-filter page-size-select"
@@ -105,27 +106,35 @@
           <option [ngValue]="50">50 / صفحة</option>
         </select>
 
-        <button class="icon-btn" [disabled]="queryFilters.pageNumber === 1" (click)="prevPage()">
+        <button class="icon-btn" [disabled]="currentPage() === 1" (click)="prevPage()">
           <svg viewBox="0 0 24 24"><path d="M15.5 5L8.5 12l7 7"></path></svg>
         </button>
 
-        @for (page of pagesArray(); track page) {
-          <button class="page-btn" [class.active]="page === queryFilters.pageNumber"
-                  (click)="goToPage(page)">
-            {{page}}
-          </button>
+        @for (page of pagesArray(); track $index) {
+          @if (page === -1) {
+            <span class="page-ellipsis">…</span>
+          } @else {
+            <button class="page-btn" [class.active]="page === currentPage()"
+                    (click)="goToPage(page)">
+              {{page}}
+            </button>
+          }
         }
 
-        <button class="icon-btn" [disabled]="queryFilters.pageNumber === totalPages()" (click)="nextPage()">
+        <button class="icon-btn" [disabled]="currentPage() === totalPages()" (click)="nextPage()">
           <svg viewBox="0 0 24 24"><path d="M8.5 5l7 7-7 7"></path></svg>
         </button>
       </div>
     </div>
   }
+
+
+
+  
 </section>
 
 @if (isModalOpen()) {
-  <component-leadmodal 
+  <component-leadmodal
     [leadid]="editingLeadId()"
     (onClose)="closeModal()"></component-leadmodal>
 }
@@ -141,7 +150,6 @@
       </div>
       <div class="modal-body">
         <p>Are you sure you want to delete this lead? This action can't be undone.</p>
-     
       </div>
       <div class="modal-foot">
         <button class="btn btn-ghost" id="del-cancel" (click)="closeDeleteModal()" [disabled]="isDeleting()">Cancel</button>
@@ -194,16 +202,19 @@
         <h4>Notes</h4>
         <p style="font-size:13.5px;color:var(--text-secondary);line-height:1.5;">{{ lead.notes || 'No notes added.' }}</p>
       </div>
-           <div class="detail-section">
+      <div class="detail-section">
         <h4>Related Tasks (0)</h4>
         <p style="font-size:13.5px;color:var(--text-secondary);line-height:1.5;">{{ lead.notes || 'No tasks linked yet..' }}</p>
       </div>
     </div>
-    <div class="modal-foot">
+    <div class="modal-foot flex ">
       <button class="btn btn-ghost" id="detail-close" (click)="closeLeadView()">Close</button>
-      <button class="btn btn-primary" id="detail-edit" (click)="editFromView()">Edit Lead</button>
+     <div>
+       <button class="btn   btn-space " id="detail-edit" (click)="convertLead(lead.id)">Convert Lead</button>
+
+       <button class="btn btn-primary" id="detail-edit" (click)="editFromView()">Edit Lead</button>
+     </div>
     </div>
   </div>
 </div>
 }
-

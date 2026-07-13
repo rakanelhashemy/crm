@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, HostListener, inject, OnInit, signal } from '@angular/core';
 import { RouterOutlet, RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../core/auth/services/auth.service';
@@ -6,7 +6,12 @@ import { ToastrService } from 'ngx-toastr';
 import { finalize } from 'rxjs';
 
 type ThemeMode = 'light' | 'dark';
-
+interface NotificationItem {
+  id: string;
+  text: string;
+  time: string;
+  read: boolean;
+}
 @Component({
   selector: 'app-supadmin',
   imports: [RouterOutlet, RouterModule, FormsModule],
@@ -70,4 +75,47 @@ export class Supadmin implements OnInit {
     localStorage.setItem(this.themeStorageKey, theme);
     document.documentElement.dataset['theme'] = theme;
   }
+
+
+   sidebarOpen = signal(false);
+
+     toggleSidebar(): void {
+    this.sidebarOpen.update((v) => !v);
+  }
+ 
+
+  closeSidebar(): void {
+    this.sidebarOpen.set(false);
+  }
+
+
+notificationsOpen = signal(false);
+notifications = signal<NotificationItem[]>([
+  { id: '1', text: 'A new client has registered in the system', time: '5 minutes ago', read: false },
+  { id: '2', text: 'Deal #204 has been updated', time: 'An hour ago', read: false },
+  { id: '3', text: 'Reminder: Call at 3 o\'clock', time: '2 hours ago', read: true },
+]);
+
+unreadNotifications = computed(() =>
+  this.notifications().filter(n => !n.read).length
+);
+
+toggleNotifications(): void {
+  this.notificationsOpen.update(v => !v);
+}
+
+markAllAsRead(): void {
+  this.notifications.update(list =>
+    list.map(n => ({ ...n, read: true }))
+  );
+}
+
+// قفل البانل لو دُست بره الزرار
+@HostListener('document:click', ['$event'])
+onDocumentClick(event: MouseEvent): void {
+  const wrapper = (event.target as HTMLElement).closest('.notification-wrapper');
+  if (!wrapper && this.notificationsOpen()) {
+    this.notificationsOpen.set(false);
+  }
+}
 }

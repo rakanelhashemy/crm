@@ -42,10 +42,8 @@ export class Tasks implements OnInit {
   tasks = signal<Task[]>([]);
 
   constructor() {
-    // تتبع التغييرات في الفلاتر (البحث)، وإعادة استدعاء الـ API تلقائياً عند تغيير الكلمة
     effect(() => {
       const filters = this.queryFilters();
-      // للتأكد من عدم ضرب الـ API قبل تحميل الأعمدة الأساسية
       if (this.columns().length > 0) {
         this.loadTasks(filters);
       }

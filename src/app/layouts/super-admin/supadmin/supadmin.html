@@ -1,82 +1,135 @@
-<div class="flex w-full min-h-dvh ">
-  <aside class="sidebar   sticky top-0 left-0">
+<div class="app-shell">
+
+  <!-- Mobile hamburger trigger (hidden on desktop via CSS) -->
+  <button class="mobile-menu-btn" (click)="toggleSidebar()" aria-label="Toggle menu">
+    <svg viewBox="0 0 24 24">
+      <path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"></path>
+    </svg>
+  </button>
+
+  <!-- Backdrop shown behind the drawer on mobile -->
+  <div class="sidebar-backdrop" [class.visible]="sidebarOpen()" (click)="closeSidebar()"></div>
+
+  <aside class="sidebar" [class.open]="sidebarOpen()">
     <div class="sidebar-brand">
       <svg class="brand-mark" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M20 4L4 16V36H15V25H25V36H36V16L20 4Z" fill="currentColor"></path>
         <circle cx="20" cy="18" r="3" fill="var(--ink-900)"></circle>
       </svg>
       <div class="brand-word">Keystone<span>CRM</span></div>
+
+      <button class="sidebar-close-btn" (click)="closeSidebar()" aria-label="Close menu">
+        <svg viewBox="0 0 24 24">
+          <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"></path>
+        </svg>
+      </button>
     </div>
 
     <nav class="sidebar-nav" id="sidebar-nav">
-      <div class="nav-item cursor-pointer" routerLink="/dashboard" routerLinkActive="active" data-view="dashboard">
+      <div class="nav-item cursor-pointer" routerLink="/dashboard" routerLinkActive="active" data-view="dashboard" (click)="closeSidebar()">
         <svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"></path></svg>
         <span>Dashboard</span>
       </div>
-      
-      <div class="nav-item cursor-pointer" routerLink="/properties" routerLinkActive="active" data-view="properties">
+
+      <div class="nav-item cursor-pointer" routerLink="/properties" routerLinkActive="active" data-view="properties" (click)="closeSidebar()">
         <svg viewBox="0 0 24 24"><path d="M5 21V3h8v6h6v12H5zm2-2h4v-2H7v2zm0-4h4v-2H7v2zm0-4h4V7H7v4zm6 8h4v-2h-4v2zm0-4h4v-2h-4v2z"></path></svg>
         <span>Properties</span>
         <span class="nav-badge" id="nav-badge-properties">9</span>
       </div>
-      
-      <div class="nav-item cursor-pointer" routerLink="/leads" routerLinkActive="active" data-view="leads">
+
+      <div class="nav-item cursor-pointer" routerLink="/leads" routerLinkActive="active" data-view="leads" (click)="closeSidebar()">
         <svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 8 1.34 8 4v2H4v-2c0-2.66 5.3-4 8-4zm0-2a4 4 0 110-8 4 4 0 010 8z"></path></svg>
         <span>Leads</span>
         <span class="nav-badge" id="nav-badge-leads">49</span>
       </div>
-      
-      <div class="nav-item cursor-pointer" routerLink="/customers" routerLinkActive="active" data-view="customers">
+
+      <div class="nav-item cursor-pointer" routerLink="/customers" routerLinkActive="active" data-view="customers" (click)="closeSidebar()">
         <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"></path></svg>
         <span>Customers</span>
       </div>
-       <div class="nav-item cursor-pointer" routerLink="/company" routerLinkActive="active" data-view="company">
+
+      <div class="nav-item cursor-pointer" routerLink="/company" routerLinkActive="active" data-view="company" (click)="closeSidebar()">
         <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
         <span>developer company</span>
       </div>
-      
-      <div class="nav-item cursor-pointer" routerLink="/deals" routerLinkActive="active" data-view="deals">
+
+      <div class="nav-item cursor-pointer" routerLink="/deals" routerLinkActive="active" data-view="deals" (click)="closeSidebar()">
         <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
         <span>Deals</span>
       </div>
-      
-      <div class="nav-item cursor-pointer" routerLink="/tasks" routerLinkActive="active" data-view="tasks">
+
+      <div class="nav-item cursor-pointer" routerLink="/tasks" routerLinkActive="active" data-view="tasks" (click)="closeSidebar()">
         <svg viewBox="0 0 24 24"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-7 0a1 1 0 110 2 1 1 0 010-2zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"></path></svg>
         <span>Tasks</span>
       </div>
-      
-      <div class="nav-item cursor-pointer" routerLink="/reports" routerLinkActive="active" data-view="reports">
+
+      <div class="nav-item cursor-pointer" routerLink="/reports" routerLinkActive="active" data-view="reports" (click)="closeSidebar()">
         <svg viewBox="0 0 24 24"><path d="M5 9.2h3V19H5V9.2zM10.6 5h2.8v14h-2.8V5zm5.6 8H19v6h-2.8v-6z"></path></svg>
         <span>Reports</span>
       </div>
-      
-      <div class="nav-item cursor-pointer" routerLink="/Teams" routerLinkActive="active" data-view="users" id="nav-users">
+
+      <div class="nav-item cursor-pointer" routerLink="/Teams" routerLinkActive="active" data-view="users" id="nav-users" (click)="closeSidebar()">
         <svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 8 1.34 8 4v2H4v-2c0-2.66 5.3-4 8-4zm0-2a4 4 0 110-8 4 4 0 010 8z"></path></svg>
         <span>Team</span>
       </div>
     </nav>
 
     <div class="sidebar-footer">
+      <div class="notification-wrapper">
+  <button (click)="toggleNotifications()" class="notification-btn" id="notification-btn" title="الإشعارات" [attr.aria-expanded]="notificationsOpen()">
+    <svg viewBox="0 0 24 24">
+      <path d="M12 2a6 6 0 00-6 6v3.09c0 .55-.22 1.08-.6 1.47L4 14v2h16v-2l-1.4-1.44a2.08 2.08 0 01-.6-1.47V8a6 6 0 00-6-6zm0 20a2.5 2.5 0 002.45-2h-4.9A2.5 2.5 0 0012 22z" fill="currentColor"></path>
+    </svg>
+    @if (unreadNotifications() > 0) {
+      <span class="notification-badge" id="notification-badge">{{ unreadNotifications() }}</span>
+    }
+  </button>
+
+  @if (notificationsOpen()) {
+    <div class="notification-panel" id="notification-panel">
+      <div class="notification-panel-header">
+        <span>notification</span>
+        @if (unreadNotifications() > 0) {
+          <button class="mark-read-btn" (click)="markAllAsRead()"> All Read</button>
+        }
+      </div>
+
+      <div class="notification-list">
+        @for (item of notifications(); track item.id) {
+          <div class="notification-item" [class.unread]="!item.read">
+            <span class="notification-dot"></span>
+            <div class="notification-content">
+              <p class="notification-text">{{ item.text }}</p>
+              <span class="notification-time">{{ item.time }}</span>
+            </div>
+          </div>
+        } @empty {
+          <div class="notification-empty">مفيش إشعارات جديدة</div>
+        }
+      </div>
+    </div>
+  }
+</div>
       <button (click)="toggleTheme()" class="theme-toggle" id="theme-toggle" title="Toggle theme" [attr.aria-pressed]="theme() === 'dark'">
         <svg class="icon-sun" viewBox="0 0 24 24"><path d="M12 7a5 5 0 100 10 5 5 0 000-10zm0-5a1 1 0 011 1v2a1 1 0 11-2 0V3a1 1 0 011-1zm0 18a1 1 0 011 1v2a1 1 0 11-2 0v-2a1 1 0 011-1zM4.22 4.22a1 1 0 011.42 0l1.4 1.42a1 1 0 11-1.4 1.4l-1.42-1.4a1 1 0 010-1.42zm12.74 12.74a1 1 0 011.42 0l1.4 1.42a1 1 0 11-1.4 1.4l-1.42-1.4a1 1 0 010-1.42zM2 12a1 1 0 011-1h2a1 1 0 110 2H3a1 1 0 01-1-1zm18 0a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1zM4.22 19.78a1 1 0 010-1.42l1.4-1.4a1 1 0 111.4 1.4l-1.4 1.42a1 1 0 01-1.4 0zm12.74-12.74a1 1 0 010-1.42l1.4-1.4a1 1 0 111.4 1.4l-1.4 1.42a1 1 0 01-1.4 0z"></path></svg>
         <svg class="icon-moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path></svg>
         <span id="theme-label">{{ theme() === 'dark' ? 'Light Mode' : 'Dark Mode' }}</span>
       </button>
-      
+
       <div class="user-chip" id="user-chip">
         <div class="user-avatar" id="user-avatar">AQ</div>
         <div class="user-meta">
           <div class="user-name" id="user-name">Amira Qutb</div>
           <div class="user-role" id="user-role">SuperAdmin</div>
         </div>
-        <button (click)="logout()" class="logout-btn" id="logout-btn" title="Log out">
+        <button (click)="logout()" class="logout-btn" id="logout-btn" title="Log out" [disabled]="isLoggingOut()">
           <svg viewBox="0 0 24 24"><path d="M16 17v-3H9v-4h7V7l5 5-5 5M14 2a2 2 0 012 2v2h-2V4H5v16h9v-2h2v2a2 2 0 01-2 2H5a2 2 0 01-2-2V4a2 2 0 012-2h9z"></path></svg>
         </button>
       </div>
     </div>
   </aside>
 
-  <div class="content ">
+  <div class="content">
     <router-outlet></router-outlet>
   </div>
 </div>

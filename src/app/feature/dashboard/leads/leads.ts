@@ -9,6 +9,7 @@ import { Lead } from '../../../core/models/lead';
 import { ShortCurrencyPipePipe } from '../../../shared/pipes/short-currency-pipe-pipe';
 import { NameavtarPipe } from '../../../shared/pipes/nameavtar-pipe';
 import { Lookup } from '../../../core/models/lookup';
+import { ToastrService } from 'ngx-toastr';
 
 
 export interface LookupItem {
@@ -27,6 +28,7 @@ export interface LookupItem {
 export class Leads implements OnInit {
   private readonly leadService = inject(Lead);
   private readonly lookupService = inject(Lookup);
+  private readonly Toastr = inject(ToastrService);
 
   statuses = signal<LookupItem[]>([]);
   sources = signal<LookupItem[]>([]);
@@ -92,30 +94,64 @@ export class Leads implements OnInit {
 
   // ---- Pagination actions ----
    // ---- Pagination state ----
-  totalCount = signal(0);
-  totalPages = signal(0);
-  pagesArray = computed(() =>
-    Array.from({ length: this.totalPages() }, (_, i) => i + 1)
-  );
 
-  goToPage(page: number) {
-    if (page < 1 || page > this.totalPages() || page === this.queryFilters.pageNumber) return;
-    this.queryFilters.pageNumber = page;
-    this.getLeads(this.queryFilters);
+totalCount = signal(0);
+totalPages = signal(0);
+currentPage = signal(1); // مصدر الحقيقة الحقيقي لرقم الصفحة
+ 
+pagesArray = computed(() => {
+  const total = this.totalPages();
+  const current = this.currentPage(); // ✅ بيتابع signal فعلي دلوقتي
+  const delta = 1; // كام صفحة تتعرض حوالين الصفحة الحالية
+ 
+  const pages: number[] = [];
+ 
+  // لو عدد الصفحات صغير، اعرضهم كلهم عادي بدون ellipsis
+  if (total <= 7) {
+    for (let i = 1; i <= total; i++) pages.push(i);
+    return pages;
   }
-
-  nextPage() {
-    this.goToPage((this.queryFilters.pageNumber || 1) + 1);
+ 
+  pages.push(1); // أول صفحة دايمًا ظاهرة
+ 
+  if (current - delta > 2) {
+    pages.push(-1); // ellipsis بعد الصفحة 1
   }
-
-  prevPage() {
-    this.goToPage((this.queryFilters.pageNumber || 1) - 1);
+ 
+  const start = Math.max(2, current - delta);
+  const end = Math.min(total - 1, current + delta);
+  for (let i = start; i <= end; i++) pages.push(i);
+ 
+  if (current + delta < total - 1) {
+    pages.push(-1); // ellipsis قبل آخر صفحة
   }
-
-  onPageSizeChange() {
-    this.queryFilters.pageNumber = 1;
-    this.getLeads(this.queryFilters);
-  }
+ 
+  pages.push(total); // آخر صفحة دايمًا ظاهرة
+ 
+  return pages;
+});
+ 
+goToPage(page: number) {
+  if (page < 1 || page > this.totalPages() || page === this.currentPage()) return;
+  this.currentPage.set(page);          // ✅ بيحرّك الـ computed
+  this.queryFilters.pageNumber = page; // نفس القيمة تتبعت للـ API زي الأول
+  this.getLeads(this.queryFilters);
+}
+ 
+nextPage() {
+  this.goToPage(this.currentPage() + 1);
+}
+ 
+prevPage() {
+  this.goToPage(this.currentPage() - 1);
+}
+ 
+onPageSizeChange() {
+  this.currentPage.set(1);
+  this.queryFilters.pageNumber = 1;
+  this.getLeads(this.queryFilters);
+}
+ 
 
   isModalOpen = signal(false);
   leads = signal<Leadd[]>([] as Leadd[]);
@@ -162,10 +198,13 @@ confirmDelete() {
 deleteLead(leadId: string) {
   this.isDeleting.set(true);
   this.leadService.deleteLead(leadId).subscribe({
-    next: () => {
+    next: (res) => {
       this.isDeleting.set(false);
+      console.log(res);
+      
       this.getLeads(this.queryFilters);
       this.closeDeleteModal();
+      this.Toastr.success("lead",res.message ,{closeButton:true  , progressBar:true})
     },
     error: (err) => {
       this.isDeleting.set(false);
@@ -215,5 +254,17 @@ deleteLead(leadId: string) {
     if (!lead) return;
     this.closeLeadView();
     this.openEditModal(lead.id);
+  }
+
+
+
+  convertLead(id:string){
+     this.leadService.convertLead(id).subscribe({
+      next:(res)=>{
+    this.closeLeadView();
+              this.Toastr.success("lead",res.message ,{closeButton:true  , progressBar:true})
+
+      }
+     })
   }
 }

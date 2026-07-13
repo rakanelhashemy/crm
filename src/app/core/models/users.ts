@@ -10,8 +10,8 @@ export class Users {
      private httpClient = inject(HttpClient);
  getUsers(filters:any={}): Observable<any> {
    let params = new HttpParams()
-    .set('pageNumber', filters.pageNumber.toString())
-    .set('pageSize', filters.pageSize.toString());
+    .set('pageNumber', filters.pageNumber)
+    .set('pageSize', filters.pageSize);
 
   if (filters.search) {
     params = params.set('name', filters.search); 

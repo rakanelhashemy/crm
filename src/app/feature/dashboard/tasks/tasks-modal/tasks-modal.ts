@@ -121,7 +121,7 @@ export class TasksModal {
     forkJoin({
       statuses: this.lookupService.gettasksStatuses(),
       priorities: this.lookupService.gettasksPriorities(),
-      users: this.usersService.getUsers(),
+      users: this.usersService.getUsersDropdown(),
       leads: this.leadService.getLeadList(),
       customers: this.customerService.getCustomers()
     }).subscribe({
@@ -130,7 +130,7 @@ export class TasksModal {
         this.priorities.set(res.priorities.data);
 
         this.users.set(
-          (res.users.data.data ?? []).map((u: any) => ({ id: u.id, fullName: u.fullName }))
+          (res.users.data ?? []).map((u: any) => ({ id: u.id, fullName: u.fullName }))
         );
         this.leads.set(
           (res.leads.data.data ?? []).map((l: any) => ({ id: l.id, fullName: l.fullName }))
