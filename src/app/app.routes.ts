@@ -45,6 +45,12 @@ export const routes: Routes = [
           import('./feature/dashboard/dashboard/dashboard').then((m) => m.Dashboard),
         title: 'dashboard page',
       },
+       {
+        path: 'profile',
+        loadComponent: () =>
+          import('./feature/dashboard/profile/profile').then((m) => m.Profile),
+        title: 'profile page',
+      },
       {
         path: 'leads',
         loadComponent: () => import('./feature/dashboard/leads/leads').then((m) => m.Leads),

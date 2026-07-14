@@ -14,7 +14,7 @@ export class Users {
     .set('pageSize', filters.pageSize);
 
   if (filters.search) {
-    params = params.set('name', filters.search); 
+    params = params.set('search', filters.search); 
   }
     return this.httpClient.get(environment.baseUrl + 'User/List' ,{params});
   }
@@ -36,5 +36,11 @@ export class Users {
   }
  getUsersDropdownStatuses(): Observable<any> {
     return this.httpClient.get(environment.baseUrl + 'Lookup/User/Statuses');
+  }
+   getMyprofile (): Observable<any> {
+    return this.httpClient.get(environment.baseUrl + 'User/Me');
+  }
+   updatemyProfile(data: object): Observable<any> {
+    return this.httpClient.put(environment.baseUrl + 'User/EditProfile', data);
   }
 }

@@ -1,14 +1,12 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { RouterOutlet, RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { AuthService } from '../../../core/auth/services/auth.service';
-import { ToastrService } from 'ngx-toastr';
 import { finalize } from 'rxjs';
+import { ToastrService } from 'ngx-toastr';
+import { AuthService } from '../../../core/auth/services/auth.service';
 import { NotificationService } from '../../../core/models/notification-service';
-import { Notification } from "../../../feature/dashboard/notification/notification";
-
-
-type ThemeMode = 'light' | 'dark';
+import { ThemeService } from '../../../core/services/theme.service';
+import { Notification } from '../../../feature/dashboard/notification/notification';
 
 @Component({
   selector: 'app-supadmin',
@@ -20,33 +18,31 @@ export class Supadmin implements OnInit {
   private readonly toastrService = inject(ToastrService);
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
-  private readonly themeStorageKey = 'crm-theme';
+  private readonly themeService = inject(ThemeService);
 
-  // بقى في الـ Service بدل ما يبقى هنا
-  notificationService = inject(NotificationService);
+  readonly notificationService = inject(NotificationService);
+  readonly theme = this.themeService.theme;
 
-  theme = signal<ThemeMode>('light');
   isLoggingOut = signal(false);
   sidebarOpen = signal(false);
 
   ngOnInit(): void {
-    this.setTheme(this.getInitialTheme());
-    this.notificationService.fetchNotifications(); // عشان الـ badge يظهر من أول ما الصفحة تفتح
+    this.notificationService.fetchNotifications();
   }
 
   toggleTheme(): void {
-    this.setTheme(this.theme() === 'dark' ? 'light' : 'dark');
+    this.themeService.toggleTheme();
   }
 
   toggleSidebar(): void {
-    this.sidebarOpen.update((v) => !v);
+    this.sidebarOpen.update((value) => !value);
   }
 
   closeSidebar(): void {
     this.sidebarOpen.set(false);
   }
 
-  logout() {
+  logout(): void {
     const revokePayload = this.authService.getRevokePayload();
 
     if (!revokePayload) {
@@ -71,20 +67,8 @@ export class Supadmin implements OnInit {
       });
   }
 
-  private getInitialTheme(): ThemeMode {
-    const savedTheme = localStorage.getItem(this.themeStorageKey);
-    if (savedTheme === 'light' || savedTheme === 'dark') {
-      return savedTheme;
-    }
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  onBellClick(event: MouseEvent): void {
+    event.stopPropagation();
+    this.notificationService.toggle();
   }
-
-  private setTheme(theme: ThemeMode): void {
-    this.theme.set(theme);
-    localStorage.setItem(this.themeStorageKey, theme);
-    document.documentElement.dataset['theme'] = theme;
-  }
-onBellClick(event: MouseEvent): void {
-  event.stopPropagation();
-  this.notificationService.toggle();
-}}
+}

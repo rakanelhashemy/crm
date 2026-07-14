@@ -92,7 +92,7 @@ html[data-theme="dark"]{
   --info-100:#172A40;
   --warn-600:#E0B458;
   --warn-100:#332512;
---color-pagination: black
+  --color-pagination: black;
   --bg-canvas:#0D1420;
   --bg-surface:#131C2B;
   --bg-surface-2:#1A2536;
