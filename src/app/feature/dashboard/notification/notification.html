@@ -1,33 +1,33 @@
 @if (notificationService.notificationsOpen()) {
   <div class="notification-panel" id="notification-panel">
     <div class="notification-panel-header">
-      <span>notification</span>
+      <span>Notifications</span>
       @if (notificationService.unreadCount() > 0) {
-        <button class="mark-read-btn" (click)="notificationService.markAllAsRead()">تحديد الكل كمقروء</button>
+        <button class="mark-read-btn" (click)="notificationService.markAllAsRead()">Mark all as read</button>
       }
     </div>
 
-  <div class="notification-list" (scroll)="onScroll($event)">
-  @if (notificationService.loading()) {
-    <div class="notification-empty">جاري التحميل...</div>
-  } @else {
-    @for (item of notificationService.notifications(); track item.id) {
-      <div class="notification-item" [class.unread]="!item.isRead" (click)="notificationService.markOneAsRead(item)">
-        <span class="notification-dot"></span>
-        <div class="notification-content">
-          <p class="notification-title">{{ item.title }}</p>
-          <p class="notification-text">{{ item.message }}</p>
-          <span class="notification-time">{{ timeAgo(item.sentAt) }}</span>
-        </div>
-      </div>
-    } @empty {
-      <div class="notification-empty">مفيش إشعارات جديدة</div>
-    }
+    <div class="notification-list" (scroll)="onScroll($event)">
+      @if (notificationService.loading()) {
+        <div class="notification-empty">Loading...</div>
+      } @else {
+        @for (item of notificationService.notifications(); track item.id) {
+          <div class="notification-item" [class.unread]="!item.isRead" (click)="notificationService.markOneAsRead(item)">
+            <span class="notification-dot"></span>
+            <div class="notification-content">
+              <p class="notification-title">{{ item.title }}</p>
+              <p class="notification-text">{{ item.message }}</p>
+              <span class="notification-time">{{ timeAgo(item.sentAt) }}</span>
+            </div>
+          </div>
+        } @empty {
+          <div class="notification-empty">No new notifications</div>
+        }
 
-    @if (notificationService.loadingMore()) {
-      <div class="notification-empty">جاري تحميل المزيد...</div>
-    }
-  }
-</div>
+        @if (notificationService.loadingMore()) {
+          <div class="notification-empty">Loading more...</div>
+        }
+      }
+    </div>
   </div>
 }

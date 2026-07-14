@@ -417,7 +417,6 @@ input,select,textarea{font-family:inherit;color:inherit;}
   color: #fff;
   border-color: var(--primary, #7A5AF8);
 }
-
 .page-size-select {
-  height: 36px;
+  height: 40px;
 }

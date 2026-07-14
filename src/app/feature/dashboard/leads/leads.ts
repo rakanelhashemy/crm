@@ -278,7 +278,7 @@ export class Leads implements OnInit {
   isExcelModalOpen = signal(false);
   isUploading = signal(false);
 
-  maxSizeMb = 10;
+  maxSizeMb = 50;
   acceptedExtensions = ['.xlsx', '.xls', '.csv'];
 
   openExcelModal(): void {

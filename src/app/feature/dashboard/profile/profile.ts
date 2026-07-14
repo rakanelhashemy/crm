@@ -103,7 +103,6 @@ export class Profile {
 
   editForm = this.fb.group({
     fullName: ['', Validators.required],
-    email: ['', [Validators.required, Validators.email]],
     phone: [''],
   });
 
@@ -115,7 +114,6 @@ export class Profile {
     const u = this.user();
     this.editForm.reset({
       fullName: u?.fullName ?? '',
-      email: u?.email ?? '',
       phone: u?.phone ?? '',
     });
   }
@@ -136,10 +134,9 @@ export class Profile {
     this.saving.set(true);
     this.saveError.set('');
 
-    const { fullName, email, phone } = this.editForm.getRawValue();
+    const { fullName, phone } = this.editForm.getRawValue();
     const payload = {
       fullName: (fullName ?? '').trim(),
-      email: (email ?? '').trim(),
       phone: (phone ?? '').trim(),
     };
 
@@ -159,9 +156,6 @@ export class Profile {
         updatedByName: updated.updatedByName ?? current?.updatedByName ?? 'You',
       });
 
-      // Then reconcile with the server to guarantee the displayed data is
-      // exactly what's persisted (covers any server-side transformations,
-      // e.g. phone formatting, email normalization, etc.).
       await this.profileResource.reload();
 
       this.editSaved.set(true);

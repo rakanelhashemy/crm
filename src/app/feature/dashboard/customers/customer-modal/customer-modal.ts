@@ -30,7 +30,7 @@ export class CustomerModal implements OnInit {
 
   form: FormGroup = this.fb.group({
     fullName: ['', Validators.required],
-    phone: ['', [Validators.required, Validators.pattern('^(05[024568][0-9]{7}|0[1-9][0-9]{7})$')]],
+    phone: ['', [Validators.required]],
     customerTag: [null, Validators.required],
     notes: [''],
     ownerId: [null ,],

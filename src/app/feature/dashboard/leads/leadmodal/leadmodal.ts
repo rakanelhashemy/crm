@@ -34,7 +34,7 @@ export class Leadmodal implements OnInit {
   // Owner is required only in edit mode (backend enforces OwnerId on update, not on create).
   form: FormGroup = this.fb.group({
     fullName: [''],
-    phone: ['', [Validators.required, Validators.pattern('^(05[024568][0-9]{7}|0[1-9][0-9]{7})$')]],
+    phone: ['', [Validators.required ]],
     source: [null, Validators.required],
     propertyType: [null, Validators.required],
     budget: [null, Validators.min(0)],

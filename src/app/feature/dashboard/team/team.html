@@ -74,28 +74,45 @@
   </div>
  
   <!-- ---- Pagination ---- -->
-  @if (totalPages() > 1) {
-    <div class="pagination">
-      <button class="btn btn-ghost" (click)="prevPage()" [disabled]="(queryFilters.pageNumber || 1) <= 1">
-        Prev
-      </button>
- 
-      @for (page of pagesArray(); track page) {
-        <button
-          class="btn"
-          [class.btn-primary]="page === queryFilters.pageNumber"
-          [class.btn-ghost]="page !== queryFilters.pageNumber"
-          (click)="goToPage(page)"
-        >
-          {{ page }}
+  @if (totalPages() > 0) {
+    <div class="pagination-bar ">
+      <div class="pagination-info">
+        Page {{currentPage()}} of {{totalPages()}} — {{totalCount()}} total users
+      </div>
+
+      <div class="pagination-controls">
+        <select class="select-filter page-size-select"
+                [(ngModel)]="queryFilters.pageSize"
+                (change)="onPageSizeChange()">
+          <option [ngValue]="10">10 / page</option>
+          <option [ngValue]="25">25 / page</option>
+          <option [ngValue]="50">50 / page</option>
+        </select>
+
+        <button class="icon-btn" [disabled]="currentPage() === 1" (click)="prevPage()">
+          <svg viewBox="0 0 24 24"><path d="M15.5 5L8.5 12l7 7"></path></svg>
         </button>
-      }
- 
-      <button class="btn btn-ghost" (click)="nextPage()" [disabled]="(queryFilters.pageNumber || 1) >= totalPages()">
-        Next
-      </button>
+
+        @for (page of pagesArray(); track $index) {
+          @if (page === -1) {
+            <span class="page-ellipsis">…</span>
+          } @else {
+            <button class="page-btn" [class.active]="page === currentPage()"
+                    (click)="goToPage(page)">
+              {{page}}
+            </button>
+          }
+        }
+
+        <button class="icon-btn" [disabled]="currentPage() === totalPages()" (click)="nextPage()">
+          <svg viewBox="0 0 24 24"><path d="M8.5 5l7 7-7 7"></path></svg>
+        </button>
+      </div>
     </div>
   }
+
+
+
 </section>
  
 @if (isModalOpen()) {

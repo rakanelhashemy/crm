@@ -101,7 +101,7 @@ background: var(--color-pagination);  border-radius: 8px;
 }
 
 .page-size-select {
-  height: 36px;
+  height: 40px;
 }
 .modal-overlay{
   position:fixed;inset:0;background:rgba(13,20,32,0.55);

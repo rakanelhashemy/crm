@@ -54,7 +54,7 @@ export class TasksModal {
     title: ['', Validators.required],
     status: [null, Validators.required],
     priority: [null, Validators.required],
-    dueDate: ['', [Validators.required,  this.futureDateValidator()] ],
+    dueDate: ['', [Validators.required, this.futureDateValidator()]],
     notes: [''],
     assigneeId: ['', Validators.required],
     leadId: [null],
@@ -78,10 +78,7 @@ export class TasksModal {
       }
     });
 
-    // Reacts to tasksId() changes the way ngOnChanges used to, but only
-    // once the lookups have loaded (so patched selects have options to
-    // match against). Runs once for the initial id, then again any time
-    // the same modal instance gets reused for a different task.
+   
     effect(() => {
       const id = this.tasksId();
       const ready = this.lookupsReady();
@@ -140,7 +137,7 @@ export class TasksModal {
         );
 
         this.isLoadingLookups.set(false);
-        // Flips the effect above so it can safely patch an existing task.
+      
         this.lookupsReady.set(true);
       },
       error: (err) => {
@@ -162,7 +159,10 @@ export class TasksModal {
           title: task.title,
           status: task.status,
           priority: task.priority,
-          dueDate: task.dueDate ? task.dueDate.substring(0, 10) : '',
+          // Keep "YYYY-MM-DDTHH:mm" (first 16 chars) so it matches what
+          // <input type="datetime-local"> expects. task.dueDate is
+          // typically an ISO string like "2026-07-15T14:30:00.000Z".
+          dueDate: task.dueDate ? task.dueDate.substring(0, 16) : '',
           notes: task.notes,
           assigneeId: task.assigneeId,
           leadId: task.leadId ?? null,
@@ -188,13 +188,18 @@ export class TasksModal {
     this.loadError.set(null);
 
     const payload = { ...this.taskForm.value };
+
+   
+    if (payload.dueDate) {
+      payload.dueDate = new Date(payload.dueDate).toISOString();
+    }
+
     const id = this.tasksId();
 
     const request$ = this.isEditMode
       ? this.taskService.updateTask(id as string, payload)
       : this.taskService.createTask(payload);
-  console.log(payload);
-  
+
     request$.subscribe({
       next: () => {
         this.isSaving.set(false);
@@ -213,22 +218,18 @@ export class TasksModal {
   } 
 
   futureDateValidator(): ValidatorFn {
-  return (control: AbstractControl): ValidationErrors | null => {
-    const value = control.value;
-    if (!value) {
-      return null; // خليه required validator هو اللي يتكفل بالفاضي
-    }
+    return (control: AbstractControl): ValidationErrors | null => {
+      const value = control.value;
+      if (!value) {
+        return null; 
+      }
 
-    const inputDate = new Date(value);
-    const today = new Date();
+      const inputDate = new Date(value);
+      const now = new Date();
 
-    // نصفر الوقت (ساعات/دقايق) عشان المقارنة تبقى بالتاريخ بس
-    inputDate.setHours(0, 0, 0, 0);
-    today.setHours(0, 0, 0, 0);
-
-    return inputDate < today ? { pastDate: true } : null;
-  };
-}
-
+     
+      return inputDate < now ? { pastDate: true } : null;
+    };
+  }
 
 }

@@ -98,9 +98,9 @@
         <select class="select-filter page-size-select"
                 [(ngModel)]="queryFilters.pageSize"
                 (change)="onPageSizeChange()">
-          <option [ngValue]="10">10 / صفحة</option>
-          <option [ngValue]="25">25 / صفحة</option>
-          <option [ngValue]="50">50 / صفحة</option>
+          <option [ngValue]="10">10 / page</option>
+          <option [ngValue]="25">25 / page</option>
+          <option [ngValue]="50">50 / page</option>
         </select>
 
         <button class="icon-btn" [disabled]="queryFilters.pageNumber === 1" (click)="prevPage()">

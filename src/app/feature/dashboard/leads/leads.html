@@ -25,8 +25,7 @@
     </div>
 
     <div class="toolbar-right">
-<button class="btn btn-space" id="add-lead-excel-btn" (click)="openExcelModal()">+ Add Lead excel</button>
-
+      <button class="btn btn-space" id="add-lead-excel-btn" (click)="openExcelModal()">+ Add Lead excel</button>
       <button class="btn btn-primary" id="add-lead-btn" (click)="openAddModal()">+ Add Lead</button>
     </div>
   </div>
@@ -71,7 +70,7 @@
                   <button class="icon-btn" (click)="$event.stopPropagation(); openEditModal(lead.id)" data-action="edit-lead" [attr.data-id]="lead.id" title="Edit">
                     <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 000-1.41l-2.34-2.34a1 1 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"></path></svg>
                   </button>
-                  <button class="icon-btn danger" data-action="delete-lead" [attr.data-id]="lead.id" title="Delete" (click)="$event.stopPropagation(); opendeleteModal(lead.id)">
+                  <button class="icon-btn" data-action="delete-lead" [attr.data-id]="lead.id" title="Delete" (click)="$event.stopPropagation(); opendeleteModal(lead.id)">
                     <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8a2 2 0 002-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg>
                   </button>
                 </div>
@@ -103,9 +102,9 @@
         <select class="select-filter page-size-select"
                 [(ngModel)]="queryFilters.pageSize"
                 (change)="onPageSizeChange()">
-          <option [ngValue]="10">10 / صفحة</option>
-          <option [ngValue]="25">25 / صفحة</option>
-          <option [ngValue]="50">50 / صفحة</option>
+          <option [ngValue]="10">10 / page</option>
+          <option [ngValue]="25">25 / page</option>
+          <option [ngValue]="50">50 / page</option>
         </select>
 
         <button class="icon-btn" [disabled]="currentPage() === 1" (click)="prevPage()">
@@ -129,10 +128,6 @@
       </div>
     </div>
   }
-
-
-
-  
 </section>
 
 @if (isModalOpen()) {
@@ -213,7 +208,6 @@
       <button class="btn btn-ghost btn-1234" id="detail-close" (click)="closeLeadView()">Close</button>
      <div>
        <button class="btn   btn-space " id="detail-convert" (click)="convertLead(lead.id)">Convert Lead</button>
-
        <button class="btn btn-primary" id="detail-edit" (click)="editFromView()">Edit Lead</button>
      </div>
     </div>
@@ -221,19 +215,18 @@
 </div>
 }
 
-
 @if (isExcelModalOpen()) {
   <div class="modal-overlay" (click)="cancel()">
-    <div class="modal-card" dir="rtl" (click)="$event.stopPropagation()">
+    <div class="modal-card" dir="ltr" (click)="$event.stopPropagation()">
       <div class="modal-head">
-        <h2>رفع ملف إكسل</h2>
-        <button class="modal-close" aria-label="إغلاق" (click)="cancel()">
+        <h2>Upload Excel File</h2>
+        <button class="modal-close" aria-label="Close" (click)="cancel()">
           <svg viewBox="0 0 24 24"><path d="M18.3 5.71 12 12l6.3 6.29-1.41 1.41L10.59 13.4 4.3 19.7l-1.41-1.41L9.19 12 2.89 5.71 4.3 4.3l6.29 6.3 6.3-6.3z"/></svg>
         </button>
       </div>
 
       <div class="modal-body">
-        <p class="modal-subtitle">اختر ملف Excel أو اسحبه هنا لرفعه.</p>
+        <p class="modal-subtitle">Choose an Excel file or drag and drop it here to upload.</p>
 
         @if (!selectedFile) {
           <label
@@ -244,9 +237,9 @@
             (drop)="onDrop($event)"
           >
             <div class="dropzone-icon"></div>
-            <span class="dropzone-title">اسحب الملف هنا أو اضغط للاختيار</span>
+            <span class="dropzone-title">Drag file here or click to select</span>
             <span class="dropzone-hint">
-              {{ acceptedExtensions.join('، ') }} — حتى {{ maxSizeMb }} ميجابايت
+              {{ acceptedExtensions.join(', ') }} — Up to {{ maxSizeMb }} MB
             </span>
             <input
               type="file"
@@ -257,22 +250,22 @@
           </label>
         } @else {
           <div class="detail-section">
-            <h4>الملف المختار</h4>
+            <h4>Selected File</h4>
             <div class="detail-row">
-              <span class="dlabel">الاسم</span>
+              <span class="dlabel">Name</span>
               <span class="dval file-name-val">{{ selectedFile.name }}</span>
             </div>
             <div class="detail-row">
-              <span class="dlabel">الحجم</span>
+              <span class="dlabel">Size</span>
               <span class="dval">{{ fileSizeLabel }}</span>
             </div>
             <div class="detail-row">
-              <span class="dlabel">النوع</span>
+              <span class="dlabel">Type</span>
               <span class="dval">{{ fileExtensionLabel }}</span>
             </div>
           </div>
           <button class="link-btn" (click)="removeFile()" [disabled]="isUploading()">
-            إزالة الملف واختيار آخر
+            Remove file and choose another
           </button>
         }
 
@@ -283,14 +276,14 @@
 
       <div class="modal-foot">
         <button class="btn btn-danger" (click)="cancel()" [disabled]="isUploading()">
-          إلغاء
+          Cancel
         </button>
         <button
           class="btn btn-primary"
           [disabled]="!selectedFile || isUploading()"
           (click)="confirmUpload()"
         >
-          {{ isUploading() ? 'جارٍ الرفع…' : 'رفع الملف' }}
+          {{ isUploading() ? 'Uploading…' : 'Upload File' }}
         </button>
       </div>
     </div>

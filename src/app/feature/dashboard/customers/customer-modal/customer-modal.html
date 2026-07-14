@@ -27,7 +27,7 @@
               <span>Phone</span>
               <input type="text" id="cf-phone" placeholder="Enter phone number"  formControlName="phone" >
               @if (form.get('phone')?.invalid && form.get('phone')?.touched) {
-                <small>Enter a valid phone number.</small>
+                <small> phone number is required.</small>
               }
             </label>
             

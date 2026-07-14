@@ -18,11 +18,11 @@ export class Notification {
     const diffHour = Math.floor(diffMin / 60);
     const diffDay = Math.floor(diffHour / 24);
 
-    if (diffMin < 1) return 'الآن';
-    if (diffMin < 60) return `منذ ${diffMin} دقيقة`;
-    if (diffHour < 24) return `منذ ${diffHour} ساعة`;
-    if (diffDay < 7) return `منذ ${diffDay} يوم`;
-    return new Date(sentAt).toLocaleDateString('ar-EG');
+    if (diffMin < 1) return 'Just now';
+    if (diffMin < 60) return `${diffMin}m ago`;
+    if (diffHour < 24) return `${diffHour}h ago`;
+    if (diffDay < 7) return `${diffDay}d ago`;
+    return new Date(sentAt).toLocaleDateString('en-US');
   }
 
   @HostListener('document:click', ['$event'])
@@ -36,10 +36,10 @@ export class Notification {
   }
 
   onScroll(event: Event): void {
-  const el = event.target as HTMLElement;
-  const threshold = 50; // px من الآخر
-  if (el.scrollHeight - el.scrollTop - el.clientHeight < threshold) {
-    this.notificationService.loadMore();
+    const el = event.target as HTMLElement;
+    const threshold = 50; // px from the bottom
+    if (el.scrollHeight - el.scrollTop - el.clientHeight < threshold) {
+      this.notificationService.loadMore();
+    }
   }
-}
 }

@@ -174,21 +174,13 @@
                   <input id="editFullName" type="text" placeholder="Full name" formControlName="fullName" />
                 </div>
 
-                <div class="field-group">
-                  <label for="editEmail">Email</label>
-                  <input id="editEmail" type="email" placeholder="you@company.com" formControlName="email" />
-                </div>
 
                 <div class="field-group">
                   <label for="editPhone">Phone</label>
                   <input id="editPhone" type="tel" placeholder="Not provided" formControlName="phone" />
                 </div>
 
-                @if (saveError()) {
-                  <p class="hint" style="color: var(--danger-600)">{{ saveError() }}</p>
-                } @else {
-                  <p class="hint">Email changes may require the user to verify the new address.</p>
-                }
+             
 
                 <div class="form-actions">
                   <button type="button" class="btn-cancel" (click)="backToProfile()">Cancel</button>

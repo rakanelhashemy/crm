@@ -51,14 +51,14 @@
           </label>
 
           <label class="field">
-            <span>Due Date</span>
-            <input type="date" formControlName="dueDate" required>
+            <span>Due Date &amp; Time</span>
+            <input type="datetime-local" formControlName="dueDate" required>
      @if (taskForm.get('dueDate')?.invalid && taskForm.get('dueDate')?.touched) {
           <span class="error-text">
             @if (taskForm.get('dueDate')?.hasError('required')) {
               Due date is required.
             } @else if (taskForm.get('dueDate')?.hasError('pastDate')) {
-              Due date must be in the future.
+              Due date/time must be in the future.
             }
           </span>
         }         
@@ -102,9 +102,7 @@
             <textarea formControlName="notes" rows="3" placeholder="Optional notes..."></textarea>
           </label>
 
-          <p class="field field-full field-note">
-            A task can link to a lead or a customer, not both — picking one clears the other.
-          </p>
+         
         </div>
       </form>
     </div>

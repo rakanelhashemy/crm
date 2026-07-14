@@ -130,25 +130,33 @@ userForm = this.fb.group({
   }
  
   // ---- Pagination ----
-  goToPage(page: number) {
-    if (page < 1 || page > this.totalPages() || page === this.queryFilters.pageNumber) return;
-    this.queryFilters.pageNumber = page;
-    this.getlist();
-  }
+
+currentPage = signal(1); // مصدر الحقيقة الحقيقي لرقم الصفحة
  
-  nextPage() {
-    this.goToPage((this.queryFilters.pageNumber || 1) + 1);
-  }
+
  
-  prevPage() {
-    this.goToPage((this.queryFilters.pageNumber || 1) - 1);
-  }
+goToPage(page: number) {
+  if (page < 1 || page > this.totalPages() || page === this.currentPage()) return;
+  this.currentPage.set(page);          // ✅ بيحرّك الـ computed
+  this.queryFilters.pageNumber = page; // نفس القيمة تتبعت للـ API زي الأول
+  this.getlist();
+}
  
-  onPageSizeChange(size: number) {
-    this.queryFilters.pageSize = size;
-    this.queryFilters.pageNumber = 1;
-    this.getlist();
-  }
+nextPage() {
+  this.goToPage(this.currentPage() + 1);
+}
+ 
+prevPage() {
+  this.goToPage(this.currentPage() - 1);
+}
+ 
+onPageSizeChange() {
+  this.currentPage.set(1);
+  this.queryFilters.pageNumber = 1;
+   this.getlist();
+
+}
+
  
   // ---- Actions ----
  changestatus() {
