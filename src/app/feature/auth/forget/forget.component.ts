@@ -57,7 +57,7 @@ export class ForgetComponent implements OnInit, OnDestroy {
   );
 
   constructor() {
-    // كل ما الخطوة تتغير، نحفظ الحالة تلقائيًا
+    // Whenever the step changes, automatically persist the state
     effect(() => {
       const step = this.forgotStep();
       this.persistState(step);
@@ -65,7 +65,7 @@ export class ForgetComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    // 1) لو فيه باراميترز جايه من رابط الإيميل (أولوية أعلى)
+    // 1) Check for parameters coming from the email link (higher priority)
     const querySub = this.route.queryParamMap.subscribe((params) => {
       const email = params.get('email') ?? '';
       const code = params.get('code') ?? params.get('token') ?? params.get('resetCode') ?? '';
@@ -84,7 +84,7 @@ export class ForgetComponent implements OnInit, OnDestroy {
         return;
       }
 
-      // 2) مفيش باراميترز؟ نحاول نسترجع آخر حالة محفوظة
+      // 2) No parameters? Try to restore the last saved state
       this.restoreState();
     });
 
@@ -96,7 +96,7 @@ export class ForgetComponent implements OnInit, OnDestroy {
   }
 
   private persistState(step: number): void {
-    // مانحفظش حاجة لو لسه في خطوة 1 (مفيش داعي)
+    // Don't save anything if still on step 1 (no need)
     if (step === 1) {
       sessionStorage.removeItem(STORAGE_KEY);
       return;
@@ -237,13 +237,13 @@ export class ForgetComponent implements OnInit, OnDestroy {
       .subscribe({
         next: () => {
           this.startResendTimer();
-          this.toastrService.success('تم إعادة إرسال الكود.', 'تم', {
+          this.toastrService.success('The code has been resent.', 'Done', {
             progressBar: true,
             closeButton: true,
           });
         },
         error: (err) => {
-          this.toastrService.error(err?.error?.message ?? 'تعذر إعادة إرسال الكود.', 'فشل', {
+          this.toastrService.error(err?.error?.message ?? 'Could not resend the code.', 'Failed', {
             progressBar: true,
             closeButton: true,
           });
@@ -301,7 +301,7 @@ export class ForgetComponent implements OnInit, OnDestroy {
     this.subscriptions.add(requestSub);
   }
 
-  // نداءه من زرار "Back to Login" عشان يمسح الحالة عمدًا
+  // Called from the "Back to Login" button to intentionally clear the state
   cancelAndGoToLogin(): void {
     this.clearPersistedState();
     this.router.navigate(['/login']);
