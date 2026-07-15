@@ -158,10 +158,7 @@ export class TasksModal {
           title: task.title,
           status: task.status,
           priority: task.priority,
-          // Keep "YYYY-MM-DDTHH:mm" (first 16 chars) so it matches what
-          // <input type="datetime-local"> expects. task.dueDate is
-          // typically an ISO string like "2026-07-15T14:30:00.000Z".
-          dueDate: task.dueDate ? task.dueDate.substring(0, 16) : '',
+          dueDate: task.dueDate ? this.toLocalDateTimeInputValue(task.dueDate) : '',
           notes: task.notes,
           assigneeId: task.assigneeId,
           leadId: task.leadId ?? null,
@@ -187,10 +184,11 @@ export class TasksModal {
 
     const payload = { ...this.taskForm.value };
 
-   
+    // Local datetime-local value -> UTC ISO string for the server
     if (payload.dueDate) {
       payload.dueDate = new Date(payload.dueDate).toISOString();
     }
+console.log(payload);
 
     const id = this.tasksId();
 
@@ -227,6 +225,14 @@ export class TasksModal {
      
       return inputDate < now ? { pastDate: true } : null;
     };
+  }
+
+  // Converts a UTC ISO string (from the server) into the local value
+  // expected by <input type="datetime-local">, e.g. "2026-07-15T16:30".
+  private toLocalDateTimeInputValue(utcIso: string): string {
+    const date = new Date(utcIso);
+    const localMs = date.getTime() - date.getTimezoneOffset() * 60000;
+    return new Date(localMs).toISOString().slice(0, 16);
   }
 
 }
