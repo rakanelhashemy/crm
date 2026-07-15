@@ -1,5 +1,5 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { computed, inject, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable, NgZone, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import * as signalR from '@microsoft/signalr';
 import { environment } from '../../../environments/environment';
@@ -49,6 +49,7 @@ export class NotificationService {
   private readonly http = inject(HttpClient);
   private readonly toastrService = inject(ToastrService);
   private readonly router = inject(Router);
+  private readonly ngZone = inject(NgZone);
 
   private readonly hubUrl = environment.notificationHubUrl;
   private hubConnection: signalR.HubConnection | null = null;
@@ -112,7 +113,8 @@ export class NotificationService {
         this.loading.set(false);
         this.loadingMore.set(false);
       },
-      error: () => {
+      error: (err) => {
+        console.error('fetchNotifications error:', err);
         this.loading.set(false);
         this.loadingMore.set(false);
       }
@@ -129,6 +131,7 @@ export class NotificationService {
       next: () => {
         this.notifications.update(list => list.map(n => ({ ...n, isRead: true })));
       },
+      error: (err) => console.error('markAllAsRead error:', err),
     });
   }
 
@@ -143,6 +146,7 @@ export class NotificationService {
           list.map(n => n.id === item.id ? { ...n, isRead: true } : n)
         );
       },
+      error: (err) => console.error('markOneAsRead error:', err),
     });
   }
 
@@ -163,17 +167,33 @@ export class NotificationService {
         .build();
 
       this.hubConnection.on('ReceiveNotification', (notification: NotificationInterface) => {
-        this.notifications.update(list => this.mergeNotifications(list, [notification]));
-        this.showInteractiveToast(notification);
+        console.log('SignalR notification received. Inside Angular zone?', NgZone.isInAngularZone());
+
+        // Ensure everything below runs inside Angular's zone so change
+        // detection picks up the DOM changes Toastr makes (this is the
+        // most common reason a toast is "added" but never visually shown
+        // on hosts like Vercel where SignalR callbacks can fire outside
+        // NgZone).
+        this.ngZone.run(() => {
+          this.notifications.update(list => this.mergeNotifications(list, [notification]));
+          this.showInteractiveToast(notification);
+        });
       });
 
-      this.hubConnection.onclose(() => {
+      this.hubConnection.onclose((err) => {
+        if (err) {
+          console.error('SignalR connection closed with error:', err);
+        }
         this.hubConnection = null;
       });
     }
 
     this.hubConnection.start()
-      .catch(() => {
+      .then(() => {
+        console.log('SignalR connected successfully.');
+      })
+      .catch((err) => {
+        console.error('SignalR connection error:', err);
         this.hubConnection = null;
       });
   }
@@ -184,26 +204,30 @@ export class NotificationService {
   }
 
   private showInteractiveToast(notification: NotificationInterface): void {
-    const meta = getNotificationMeta(notification.type);
+    try {
+      const meta = getNotificationMeta(notification.type);
 
-    const toast = this.toastrService.info(notification.message, notification.title || meta.label, {
-      closeButton: true,
-      tapToDismiss: false,
-      timeOut: 8000,
-      extendedTimeOut: 4000,
-    });
+      const toast = this.toastrService.info(notification.message, notification.title || meta.label, {
+        closeButton: true,
+        tapToDismiss: false,
+        timeOut: 8000,
+        extendedTimeOut: 4000,
+      });
 
-    toast.onTap.subscribe(() => {
-      this.markOneAsRead(notification);
-      if (notification.taskItemId) {
-        this.router.navigate(['/tasks', notification.taskItemId]);
-      }
-      this.notificationsOpen.set(false);
-    });
+      toast.onTap.subscribe(() => {
+        this.markOneAsRead(notification);
+        if (notification.taskItemId) {
+          this.router.navigate(['/tasks', notification.taskItemId]);
+        }
+        this.notificationsOpen.set(false);
+      });
 
-    toast.onAction?.subscribe(() => {
-      this.markOneAsRead(notification);
-    });
+      toast.onAction?.subscribe(() => {
+        this.markOneAsRead(notification);
+      });
+    } catch (err) {
+      console.error('showInteractiveToast error:', err);
+    }
   }
 
   private mergeNotifications(
