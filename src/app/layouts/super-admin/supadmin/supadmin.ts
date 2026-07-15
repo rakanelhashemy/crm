@@ -7,10 +7,12 @@ import { AuthService } from '../../../core/auth/services/auth.service';
 import { NotificationService } from '../../../core/models/notification-service';
 import { ThemeService } from '../../../core/services/theme.service';
 import { Notification } from '../../../feature/dashboard/notification/notification';
+import { Users } from '../../../core/models/users';
+import { NameavtarPipe } from '../../../shared/pipes/nameavtar-pipe';
 
 @Component({
   selector: 'app-supadmin',
-  imports: [RouterOutlet, RouterModule, FormsModule, Notification],
+  imports: [RouterOutlet, RouterModule, FormsModule, Notification, NameavtarPipe],
   templateUrl: './supadmin.html',
   styleUrl: './supadmin.css',
 })
@@ -19,6 +21,7 @@ export class Supadmin implements OnInit {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
   private readonly themeService = inject(ThemeService);
+  private readonly usersService = inject(Users);
 
   readonly notificationService = inject(NotificationService);
   readonly theme = this.themeService.theme;
@@ -28,6 +31,7 @@ export class Supadmin implements OnInit {
 
   ngOnInit(): void {
     this.notificationService.fetchNotifications();
+    this.getMyusersService()
   }
 
   toggleTheme(): void {
@@ -72,6 +76,15 @@ export class Supadmin implements OnInit {
     this.notificationService.toggle();
   }
 
-
+ name= signal<string|null>(null)
+  getMyusersService(){
+    this.usersService.getMyprofile().subscribe({
+      next:(res)=>{
+        console.log(res);
+        
+        this.name.set(res.data.fullName)
+      }
+    })
+  }
   
 }

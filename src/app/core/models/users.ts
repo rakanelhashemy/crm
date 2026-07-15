@@ -37,7 +37,7 @@ export class Users {
  getUsersDropdownStatuses(): Observable<any> {
     return this.httpClient.get(environment.baseUrl + 'Lookup/User/Statuses');
   }
-   getMyprofile (): Observable<any> {
+   getMyprofile(): Observable<any> {
     return this.httpClient.get(environment.baseUrl + 'User/Me');
   }
    updatemyProfile(data: object): Observable<any> {

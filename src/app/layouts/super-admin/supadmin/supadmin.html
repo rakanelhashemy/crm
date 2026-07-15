@@ -75,18 +75,10 @@
 
     <div class="sidebar-footer">
  
-<div class="notification-wrapper">
-  <button (click)="onBellClick($event)" class="notification-btn" id="notification-btn" title="الإشعارات" [attr.aria-expanded]="notificationService.notificationsOpen()">
-    <svg viewBox="0 0 24 24">
-      <path d="M12 2a6 6 0 00-6 6v3.09c0 .55-.22 1.08-.6 1.47L4 14v2h16v-2l-1.4-1.44a2.08 2.08 0 01-.6-1.47V8a6 6 0 00-6-6zm0 20a2.5 2.5 0 002.45-2h-4.9A2.5 2.5 0 0012 22z" fill="currentColor"></path>
-    </svg>
-    @if (notificationService.unreadCount() > 0) {
-      <span class="notification-badge" id="notification-badge">{{ notificationService.unreadCount() }}</span>
-    }
-  </button>
+
 
   <component-notification></component-notification>
-</div>
+
 
 
 
@@ -97,10 +89,9 @@
       </button>
 
       <div class="user-chip" id="user-chip">
-        <div routerLink="/profile" class="user-avatar" id="user-avatar">AQ</div>
+        <div routerLink="/profile" class="user-avatar cursor-pointer" id="user-avatar">{{name() |nameavtar}}</div>
         <div class="user-meta"  routerLink="/profile" >
-          <div class="user-name" id="user-name">Amira Qutb</div>
-          <div class="user-role" id="user-role">SuperAdmin</div>
+          <div class="user-name cursor-pointer" id="user-name">{{name()}}</div>
         </div>
         <button (click)="logout()" class="logout-btn" id="logout-btn" title="Log out" [disabled]="isLoggingOut()">
           <svg viewBox="0 0 24 24"><path d="M16 17v-3H9v-4h7V7l5 5-5 5M14 2a2 2 0 012 2v2h-2V4H5v16h9v-2h2v2a2 2 0 01-2 2H5a2 2 0 01-2-2V4a2 2 0 012-2h9z"></path></svg>

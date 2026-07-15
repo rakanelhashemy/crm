@@ -3,6 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
 import { environment } from '../../../../environments/environment';
+import { NotificationService } from '../../models/notification-service';
 
 @Injectable({
   providedIn: 'root',
@@ -10,6 +11,8 @@ import { environment } from '../../../../environments/environment';
 export class AuthService {
   private readonly httpClient = inject(HttpClient);
   private readonly router = inject(Router);
+  private readonly notificationService = inject(NotificationService);
+
 
   signIn(data: object): Observable<any> {
     return this.httpClient.post(environment.baseUrl + `Auth/SignIn`, data).pipe(
@@ -109,6 +112,7 @@ export class AuthService {
 
   saveAuthData(data: any): void {
     if (!data) return;
+this.notificationService.connectRealtime();
 
     const accessToken = data.accessToken ?? data.token ?? data.jwtToken;
     const refreshToken = data.refreshToken?.tokenString ?? data.refreshToken ?? data.refreshTokenString;
@@ -128,6 +132,7 @@ export class AuthService {
   }
 
   clearAuthData(): void {
+    this.notificationService.disconnectRealtime();
     localStorage.removeItem('Token');
     localStorage.removeItem('refreshToken');
     localStorage.removeItem('userEmail');
