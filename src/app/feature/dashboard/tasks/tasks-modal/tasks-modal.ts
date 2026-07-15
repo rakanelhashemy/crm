@@ -141,7 +141,6 @@ export class TasksModal {
         this.lookupsReady.set(true);
       },
       error: (err) => {
-        console.error('Error loading lookup data', err);
         this.isLoadingLookups.set(false);
         this.loadError.set('Could not load form data. Please try again.');
       }
@@ -171,7 +170,6 @@ export class TasksModal {
         this.isLoadingTask.set(false);
       },
       error: (err) => {
-        console.error('Error loading task', err);
         this.isLoadingTask.set(false);
         this.loadError.set('Could not load this task. Please try again.');
       }
@@ -206,7 +204,6 @@ export class TasksModal {
         this.close();
       },
       error: (err) => {
-        console.error('Error saving task', err);
         this.isSaving.set(false);
         this.loadError.set('Could not save the task. Please try again.');
       }

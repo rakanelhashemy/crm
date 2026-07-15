@@ -81,7 +81,6 @@ export class Tasks implements OnInit {
     // تأكد أن الـ الـ getTasks في الـ Service عندك بتقبل الـ filters كـ Parameter
     this.taskService.getTasks(filters).subscribe({
       next: (res: any) => {
-        console.log(res);
         
        this.totalCount.set(res?.data?.totalCount ?? 0);
         this.totalPages.set(
@@ -97,7 +96,6 @@ export class Tasks implements OnInit {
         }
       },
       error: (err) => {
-        console.error('Error fetching tasks:', err);
         this.tasks.set([]);
       }
     });
@@ -144,15 +142,12 @@ export class Tasks implements OnInit {
 
     this.taskService.updateTaskStatus(taskId, newStatusNumber).subscribe({
       next: (res) => {
-        console.log('Status updated successfully:', res);
         
         this.tasks.update(allTasks => 
           allTasks.map(t => t.id === taskId ? { ...t, status: newStatusNumber } : t)
         );
-      },
-      error: (err) => {
-        console.error('Error updating task status:', err);
       }
+    
     });
   }
 
@@ -233,7 +228,6 @@ deleteTasks(leadId: string) {
     },
     error: (err) => {
       this.isDeleting.set(false);
-      console.error('Error deleting lead:', err);
     },
   });
 }

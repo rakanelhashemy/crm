@@ -80,7 +80,6 @@ export class Supadmin implements OnInit {
   getMyusersService(){
     this.usersService.getMyprofile().subscribe({
       next:(res)=>{
-        console.log(res);
         
         this.name.set(res.data.fullName)
       }
