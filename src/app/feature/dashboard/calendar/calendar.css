@@ -1,0 +1,223 @@
+:host {
+  --surface-card: #ffffff;
+  --surface-muted: #f1f1ef;
+
+  --text-primary: #1a1a18;
+  --text-secondary: #6b6b66;
+  --text-muted: #9a9a94;
+
+  --border: #e4e4e0;
+  --border-strong: #cfcfc9;
+
+  --accent-bg: #e6f1fb;
+  --accent-text: #0c447c;
+  --accent-fill: #185fa5;
+  --accent-fill-hover: #0c447c;
+
+  --success-bg: #eaf3de;
+  --success-text: #27500a;
+
+  --radius: 8px;
+  --radius-lg: 12px;
+
+  --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+
+  display: block;
+  max-width: 640px;
+  margin: 0 auto;
+  color: var(--text-primary);
+}
+
+.card {
+  background: var(--surface-card);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 2rem 1.5rem;
+}
+
+.card--centered {
+  max-width: 420px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.icon-badge {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--accent-bg);
+  color: var(--accent-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+}
+
+.title {
+  font-weight: 500;
+  font-size: 16px;
+  margin: 0 0 4px;
+}
+
+.subtitle {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin: 0 0 20px;
+}
+
+.error-message {
+  font-size: 13px;
+  color: #a32d2d;
+  margin: 12px 0 0;
+}
+
+.btn {
+  height: 36px;
+  padding: 0 20px;
+  border-radius: var(--radius);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  transition: background-color 120ms ease, transform 80ms ease;
+}
+
+.btn:active {
+  transform: scale(0.98);
+}
+
+.btn--primary {
+  background: var(--accent-fill);
+  color: #ffffff;
+}
+
+.btn--primary:hover {
+  background: var(--accent-fill-hover);
+}
+
+.btn--outline {
+  background: transparent;
+  border: 0.5px solid var(--border-strong);
+  color: var(--text-secondary);
+  height: 30px;
+  padding: 0 12px;
+  font-size: 13px;
+}
+
+.btn--outline:hover {
+  background: var(--surface-muted);
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.connected {
+  max-width: 620px;
+  margin: 0 auto;
+}
+
+.status-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--surface-muted);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  margin-bottom: 1.25rem;
+}
+
+.status-bar__account {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--accent-bg);
+  color: var(--accent-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.account-email {
+  font-size: 13px;
+  font-weight: 500;
+  margin: 0;
+}
+
+.sync-time {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.section-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin: 0 0 8px;
+}
+
+.calendar {
+  display: grid;
+  grid-template-columns: 44px repeat(5, 1fr);
+  border-top: 0.5px solid var(--border);
+  border-left: 0.5px solid var(--border);
+}
+
+.calendar__day-header {
+  text-align: center;
+  padding: 6px 0;
+  border-right: 0.5px solid var(--border);
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.calendar__day-header--today {
+  color: var(--accent-text);
+  font-weight: 500;
+}
+
+.calendar__time-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  text-align: right;
+  padding: 22px 6px 0 0;
+  border-bottom: 0.5px solid var(--border);
+}
+
+.calendar__cell {
+  border-right: 0.5px solid var(--border);
+  border-bottom: 0.5px solid var(--border);
+  padding: 4px;
+  min-height: 36px;
+}
+
+.event-chip {
+  font-size: 11px;
+  padding: 3px 5px;
+  border-radius: 4px;
+  background: var(--accent-bg);
+  color: var(--accent-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.event-chip--success {
+  background: var(--success-bg);
+  color: var(--success-text);
+}

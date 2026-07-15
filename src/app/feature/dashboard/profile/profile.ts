@@ -4,6 +4,7 @@ import { firstValueFrom } from 'rxjs';
 import { Users } from '../../../core/models/users';
 import { ThemeService } from '../../../core/services/theme.service';
 import { AuthService } from '../../../core/auth/services/auth.service';
+import { Calendar } from "../calendar/calendar";
 
 export interface UserRecord {
   id: string;
@@ -28,7 +29,7 @@ function passwordsMatchValidator(group: AbstractControl): ValidationErrors | nul
 
 @Component({
   selector: 'component-profile',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, Calendar],
   templateUrl: './profile.html',
   styleUrl: './profile.css',
 })
