@@ -24,16 +24,17 @@
   <section class="connected">
     <div class="status-bar">
       <div class="status-bar__account">
-        <div class="avatar">ms</div>
+        <div class="avatar">{{name() |nameavtar}}</div>
         <div>
-          <p class="account-email">ms</p>
-          <p class="sync-time">ms</p>
+          <p class="account-email">{{name()}}</p>
+          <p class="sync-time">{{email()}}</p>
         </div>
       </div>
       <button class="btn btn--outline"  (click)="disconnect()">
+        disconnect
       </button>
     </div>
-    <p class="section-label">This week</p>
+
     <div class="calendar">
       <div></div>
    

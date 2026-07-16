@@ -36,7 +36,7 @@
               <div class="notification-content">
                 <p class="notification-title">{{ item.title }}</p>
                 <p class="notification-text">{{ item.message }}</p>
-                <span class="notification-time">{{ timeAgo(item.sentAt) }}</span>
+                <span class="notification-time">{{ (item.sentAt |utcToLocal) }}</span>
               </div>
             </div>
           } @empty {

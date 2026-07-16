@@ -61,7 +61,7 @@
                   <span>{{lead.ownerName || "-"}}</span>
                 </div>
               </td>
-              <td class="cell-sub">{{ lead?.updatedAt || lead?.createdAt | timeago }}</td>
+              <td class="cell-sub">{{ (lead?.updatedAt || lead?.createdAt) | utcToLocal }}</td>
               <td>
                 <div class="row-actions">
                   <button class="icon-btn" data-action="view-lead" [attr.data-id]="lead.id" title="View" (click)="$event.stopPropagation(); viewLead(lead.id)">
@@ -159,8 +159,8 @@
 }
 
 @if(isShowleadView() && selectedLead(); as lead) {
-<div class="modal-overlay" id="modal-overlay">
-  <div class="modal-card">
+<div class="modal-overlay" id="modal-overlay"  (click)="closeLeadView()">
+  <div class="modal-card" (click)="$event.stopPropagation()">
     <div class="modal-head">
       <h2>{{ lead.fullName || '-' }}</h2>
       <button class="modal-close" (click)="closeLeadView()">
@@ -190,8 +190,10 @@
       <div class="detail-section">
         <h4>Ownership</h4>
         <div class="detail-row"><span class="dlabel">Owner</span><span class="dval">{{ lead.ownerName || '-' }}</span></div>
-        <div class="detail-row"><span class="dlabel">Created</span><span class="dval">{{ lead.createdAt | timeago }}</span></div>
-        <div class="detail-row"><span class="dlabel">Updated</span><span class="dval">{{ lead.updatedAt ? (lead.updatedAt | timeago) : '–' }}</span></div>
+        <div class="detail-row"><span class="dlabel">created By</span><span class="dval">{{ lead.createdByName ||"-" }}</span></div>
+        <div class="detail-row"><span class="dlabel">created At</span><span class="dval">{{ (lead.createdAt | utcToLocal  )||"-" }}</span></div>
+         <div class="detail-row"><span class="dlabel">updatedBy</span><span class="dval">{{ lead.updatedByName  ||"-" }}</span></div>
+        <div class="detail-row"><span class="dlabel">updated At</span><span class="dval">{{ lead.updatedAt ? (lead.updatedAt | utcToLocal) : '–' }}</span></div>
         <div class="detail-row"><span class="dlabel">Converted</span><span class="dval">{{ lead.isConverted ? 'Yes' : 'No' }}</span></div>
       </div>
 
@@ -199,10 +201,21 @@
         <h4>Notes</h4>
         <p style="font-size:13.5px;color:var(--text-secondary);line-height:1.5;">{{ lead.notes || 'No notes added.' }}</p>
       </div>
-      <div class="detail-section">
-        <h4>Related Tasks (0)</h4>
-        <p style="font-size:13.5px;color:var(--text-secondary);line-height:1.5;">{{ lead.notes || 'No tasks linked yet..' }}</p>
-      </div>
+  
+      
+          @if( lead?.totalPendingTasks! > 0) 
+      {
+ <div class="detail-section">
+        <h4>Related Tasks ({{ lead?.totalPendingTasks }})</h4>
+     
+             @for (task of lead?.pendingTasks; track $index) {
+               
+          <div class="detail-row"><span class="dlabel">{{task.title}}</span><span class="dval">Todo {{task.dueDate  |  utcToLocal }}</span></div>
+        
+         
+             }
+      </div> 
+      }
     </div>
     <div class="modal-foot flex ">
       <button class="btn btn-ghost btn-1234" id="detail-close" (click)="closeLeadView()">Close</button>

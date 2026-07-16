@@ -74,7 +74,7 @@
         <span class="property-card-price">${{property.price |number:'1.0-0'}}</span>
       </div>
       <div class="flex justify-between">
-      <div class="entity-meta">Created by {{property.createdByName}} · Created At {{property.createdAt |date:"MM/dd/yyyy"}}</div>
+      <div class="entity-meta">Created by {{property.createdByName}} <br> Created At {{property.createdAt |utcToLocal }}</div>
       <div class="flex">
         <button class="icon-btn ms-1.5" title="Edit" (click)="$event.stopPropagation(); openAddPropertyModal(property.id)">
                     <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 000-1.41l-2.34-2.34a1 1 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"></path></svg>
@@ -186,7 +186,7 @@
  
           <div class="detail-row"><span class="dlabel">Area</span><span class="dval">{{ selectedProperty()?.area | number:'1.0-0' }} sqft</span></div>
           <div class="detail-row"><span class="dlabel">Price</span><span class="dval">${{ selectedProperty()?.price | number:'1.0-0' }}</span></div>
-          <div class="detail-row"><span class="dlabel">Construction Started</span><span class="dval">{{ selectedProperty()?.createdAt | date:"MMM d, yyyy" }}</span></div>
+          <div class="detail-row"><span class="dlabel">Construction Started</span><span class="dval">{{ selectedProperty()?.createdAt |utcToLocal }}</span></div>
           <div class="detail-row"><span class="dlabel">Assigned Agent</span><span class="dval">{{ selectedProperty()?.agentName }}</span></div>
  
           <div class="detail-row"><span class="dlabel">Created By</span><span class="dval">{{ selectedProperty()?.createdByName }}</span></div>

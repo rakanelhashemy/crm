@@ -6,14 +6,14 @@ import { Custmor } from '../../../core/models/custmor';
 import { Lookup } from '../../../core/models/lookup';
 import { LookupItem } from '../leads/leads';
 import { NameavtarPipe } from '../../../shared/pipes/nameavtar-pipe';
-import { TimeagoPipe } from '../../../shared/pipes/timeago-pipe';
 import { CustomerModal } from "./customer-modal/customer-modal";
 import { ShortCurrencyPipePipe } from '../../../shared/pipes/short-currency-pipe-pipe';
 import { DatePipe } from '@angular/common';
+import { UtcToLocalPipe } from '../../../shared/pipes/utc-to-local-pipe-pipe';
 
 @Component({
   selector: 'component-customers',
-  imports: [FormsModule, NameavtarPipe, TimeagoPipe, CustomerModal ,ShortCurrencyPipePipe,DatePipe],
+  imports: [FormsModule, NameavtarPipe, UtcToLocalPipe, CustomerModal ,ShortCurrencyPipePipe],
   templateUrl: './customers.html',
   styleUrl: './customers.css',
 })

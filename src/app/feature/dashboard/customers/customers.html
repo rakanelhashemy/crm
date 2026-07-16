@@ -44,7 +44,7 @@
       <div class="customer-card-foot">
         <span class="customer-tag">{{customer.customerTagLabel }}</span>
              
-        <span class="cell-sub flex justify-center items-center">{{customer.createdAt|timeago}}    <button class="icon-btn danger ms-1.5" data-action="delete-lead" [attr.data-id]="customer.id" title="Delete" (click)="$event.stopPropagation(); opendeleteModal(customer.id)">
+        <span class="cell-sub flex justify-center items-center">{{customer.createdAt|utcToLocal}}    <button class="icon-btn danger ms-1.5" data-action="delete-lead" [attr.data-id]="customer.id" title="Delete" (click)="$event.stopPropagation(); opendeleteModal(customer.id)">
                     <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8a2 2 0 002-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg>
                   </button>      </span>
         
@@ -135,13 +135,13 @@
         <div class="detail-row"><span class="dlabel">Account Owner</span><span class="dval">{{ selectedCustomer()?.ownerName }}</span></div>
   
         <div class="detail-row"><span class="dlabel">Created By</span><span class="dval">{{ (selectedCustomer()?.createdByName) || '–' }}</span></div>
-        <div class="detail-row"><span class="dlabel">Created AT</span><span class="dval">{{ (selectedCustomer()?.createdAt| date:'M/d/yyyy') || '–' }}</span></div>
+        <div class="detail-row"><span class="dlabel">Created AT</span><span class="dval">{{ (selectedCustomer()?.createdAt| utcToLocal ) || '–' }}</span></div>
         
         <div class="detail-row"><span class="dlabel">Updated By</span><span class="dval">{{ (selectedCustomer()?.updatedByName) || '–' }}</span></div> 
-        <div class="detail-row"><span class="dlabel">Updated AT</span><span class="dval">{{ (selectedCustomer()?.updatedAt| date:'M/d/yyyy') || '–' }}</span></div> 
+        <div class="detail-row"><span class="dlabel">Updated AT</span><span class="dval">{{ (selectedCustomer()?.updatedAt| utcToLocal ) || '–' }}</span></div> 
       </div>
      
-      @if( selectedCustomer()?.totalDeals !> 0) 
+      @if( selectedCustomer()?.totalDeals! > 0) 
       {
  <div class="detail-section">
         <h4>Associated Deals ({{ selectedCustomer()?.totalDeals }})</h4>
@@ -154,14 +154,14 @@
              }
       </div> 
       }
-    @if( selectedCustomer()?.totalPendingTasks !> 0) 
+    @if( selectedCustomer()?.totalPendingTasks! > 0) 
       {
  <div class="detail-section">
         <h4>Related Tasks ({{ selectedCustomer()?.totalPendingTasks }})</h4>
      
              @for (task of selectedCustomer()?.pendingTasks; track $index) {
                
-          <div class="detail-row"><span class="dlabel">{{task.title}}</span><span class="dval">Todo {{task.dueDate |date:'M/d/yyyy'}}</span></div>
+          <div class="detail-row"><span class="dlabel">{{task.title}}</span><span class="dval">Todo {{task.dueDate  |  utcToLocal }}</span></div>
         
          
              }

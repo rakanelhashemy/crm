@@ -1,10 +1,12 @@
 import { Component, ElementRef, HostListener, inject } from '@angular/core';
 import { NotificationService } from '../../../core/models/notification-service';
 import { CommonModule } from '@angular/common';
+import { UtcToLocalPipe } from '../../../shared/pipes/utc-to-local-pipe-pipe';
+import { TimeagoPipe } from '../../../shared/pipes/timeago-pipe';
 
 @Component({
   selector: 'component-notification',
-  imports: [CommonModule],
+  imports: [CommonModule ,UtcToLocalPipe],
   templateUrl: './notification.html',
   styleUrl: './notification.css',
 })

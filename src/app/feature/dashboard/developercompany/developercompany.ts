@@ -2,15 +2,15 @@ import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { LeadFilter } from '../leads/leadfilter';
 import { Developercompanyy } from './../../../core/models/developercompany';
 import { developerinterface } from './deveinterface';
-import { DatePipe } from '@angular/common';
 import { DeveloperModal } from "./developer-modal/developer-modal";
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
+import { UtcToLocalPipe } from '../../../shared/pipes/utc-to-local-pipe-pipe';
 
 @Component({
   selector: 'component-developercompany',
-  imports: [DatePipe, DeveloperModal ,FormsModule],
+  imports: [UtcToLocalPipe, DeveloperModal ,FormsModule],
 templateUrl: './developercompany.html',
   styleUrl: './developercompany.css',
 })

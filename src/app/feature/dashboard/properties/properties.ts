@@ -6,6 +6,7 @@ import { LeadFilter } from '../leads/leadfilter';
 import { ProperityModal } from "./properity-modal/properity-modal";
 import { LookupItem } from '../leads/leads';
 import { FormsModule } from '@angular/forms';
+import { UtcToLocalPipe } from '../../../shared/pipes/utc-to-local-pipe-pipe';
 interface LookupItemv2 {
   id: string;
   name?: string;
@@ -13,7 +14,7 @@ interface LookupItemv2 {
 }
 @Component({
   selector: 'component-properties',
-  imports: [DecimalPipe, DatePipe, ProperityModal, NgClass ,FormsModule],
+  imports: [DecimalPipe, ProperityModal, NgClass ,FormsModule,UtcToLocalPipe],
 templateUrl: './properties.html',
   styleUrl: './properties.css',
 })

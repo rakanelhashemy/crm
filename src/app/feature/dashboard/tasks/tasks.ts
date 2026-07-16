@@ -7,6 +7,7 @@ import { Taskss } from '../../../core/models/tasks';
 import { Lookup } from '../../../core/models/lookup';
 import { NameavtarPipe } from '../../../shared/pipes/nameavtar-pipe';
 import { TasksModal } from "./tasks-modal/tasks-modal";
+import { UtcToLocalPipe } from '../../../shared/pipes/utc-to-local-pipe-pipe';
 
 interface TaskCard {
   id: string;
@@ -22,7 +23,7 @@ interface TaskCard {
 
 @Component({
   selector: 'component-tasks',
-  imports: [FormsModule, CommonModule, NameavtarPipe, TasksModal],
+  imports: [FormsModule, CommonModule, NameavtarPipe, TasksModal , UtcToLocalPipe],
   providers: [],
   templateUrl: './tasks.html',
   styleUrl: './tasks.css',

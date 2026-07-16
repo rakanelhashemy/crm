@@ -4,7 +4,7 @@ import { Pipe, PipeTransform } from '@angular/core';
   name: 'timeago',
 })
 export class TimeagoPipe implements PipeTransform {
-transform(value: any): string {
+  transform(value: any): string {
     if (!value) return '';
 
     const date = new Date(value);

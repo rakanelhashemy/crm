@@ -60,7 +60,7 @@
                   {{ task.priorityLabel }}
                 </span>
                 <span class="cell-sub" [class.text-danger]="task.isOverdue">
-                  {{ task.dueDate | date:'medium'}}
+                  {{ task.dueDate |utcToLocal}}
                 </span>
               </div>
 

@@ -1,6 +1,5 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { Leadmodal } from './leadmodal/leadmodal';
-import { TimeagoPipe } from '../../../shared/pipes/timeago-pipe';
 import { LeadFilter } from './leadfilter';
 import { FormsModule } from '@angular/forms';
 import { Leadd } from './leadmodal/leadinterface';
@@ -9,6 +8,7 @@ import { ShortCurrencyPipePipe } from '../../../shared/pipes/short-currency-pipe
 import { NameavtarPipe } from '../../../shared/pipes/nameavtar-pipe';
 import { Lookup } from '../../../core/models/lookup';
 import { ToastrService } from 'ngx-toastr';
+import { UtcToLocalPipe } from '../../../shared/pipes/utc-to-local-pipe-pipe';
 
 export interface ExcelUploadResult {
   file: File;
@@ -24,7 +24,7 @@ export interface LookupItem {
 
 @Component({
   selector: 'component-leads',
-  imports: [Leadmodal,  TimeagoPipe, FormsModule, ShortCurrencyPipePipe, NameavtarPipe],
+  imports: [Leadmodal, UtcToLocalPipe, FormsModule, ShortCurrencyPipePipe, NameavtarPipe],
   templateUrl: './leads.html',
   styleUrl: './leads.css',
 })
@@ -221,20 +221,12 @@ export class Leads implements OnInit {
 
   isShowleadView = signal(false);
   selectedLead = signal<Leadd | null>(null);
-
   viewLead(leadId: string) {
-    // Try to find it in the already-loaded page first (avoids an extra call)
-    const found = this.leads().find(l => l.id === leadId);
-    if (found) {
-      
-      this.selectedLead.set(found);
-      this.isShowleadView.set(true);
-      return;
-    }
-
-
+   
+  
     this.leadService.getLeadById(leadId).subscribe({
       next: (res) => {
+        
         console.log('Fetched lead details:', res?.data);
         this.selectedLead.set(res?.data ?? null);
         this.isShowleadView.set(true);
@@ -243,6 +235,7 @@ export class Leads implements OnInit {
         console.error('Error fetching lead details:', err);
       },
     });
+
   }
 
   closeLeadView() {
