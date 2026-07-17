@@ -1,15 +1,16 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { Users } from '../../../core/models/users';
 import { LeadFilter } from '../leads/leadfilter';
-import { UserStatus } from './teamsinterface';
+import { userr, UserStatus } from './teamsinterface';
 import { NameavtarPipe } from '../../../shared/pipes/nameavtar-pipe';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { LookupItem } from '../leads/leads';
 import { AuthService } from '../../../core/auth/services/auth.service';
+import { UtcToLocalPipe } from '../../../shared/pipes/utc-to-local-pipe-pipe';
 
 @Component({
   selector: 'component-team',
-  imports: [NameavtarPipe ,ReactiveFormsModule ,FormsModule],
+  imports: [NameavtarPipe ,ReactiveFormsModule ,FormsModule ,UtcToLocalPipe],
   templateUrl: './team.html',
   styleUrl: './team.css',
 })
@@ -111,7 +112,9 @@ userForm = this.fb.group({
     this.isModalOpen.set(true);
   }
  
+
   openEditModal(userId: string) {
+  this.isCustomerDetailsModalOpen.set(false)
     this.editUserId.set(userId);
     const current = this.userslist().find((u) => u.id === userId);
     this.statusForm.reset({
@@ -202,4 +205,34 @@ submitform() {
     },
   });
 }
+
+
+
+
+isCustomerDetailsModalOpen = signal(false);
+selectedUser = signal<userr|null>({}  as userr )
+
+openCustomerDetailsModal(customerId: string){
+  this.isCustomerDetailsModalOpen.set(true);
+
+ this.userService.getUserById(customerId).subscribe({
+   next: (res) => {
+    console.log(res);
+    
+      this.selectedUser.set(res?.data || null);
+    },
+error: (err) => {
+  console.error('Failed to load customer details', err);
+ }
+}
+)
+
+
+}
+closeCustomerDetailsModal(){
+  this.isCustomerDetailsModalOpen.set(false);
+}
+
+
+
 }

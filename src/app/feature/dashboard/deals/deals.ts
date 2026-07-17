@@ -4,13 +4,15 @@ import { Lookup } from '../../../core/models/lookup';
 import { LookupItem } from '../leads/leads';
 import { FormsModule } from '@angular/forms';
 import { Dealsser } from '../../../core/models/dealsser';
-import { PropertyDeal } from './dealinterface';
+import { Dealll, PropertyDeal } from './dealinterface';
 import { NameavtarPipe } from '../../../shared/pipes/nameavtar-pipe';
 import { DealModal } from "./deal-modal/deal-modal";
+import { ShortCurrencyPipePipe } from '../../../shared/pipes/short-currency-pipe-pipe';
+import { UtcToLocalPipe } from '../../../shared/pipes/utc-to-local-pipe-pipe';
 
 @Component({
   selector: 'component-deals',
-  imports: [FormsModule, NameavtarPipe, DealModal],
+  imports: [FormsModule, NameavtarPipe, DealModal ,ShortCurrencyPipePipe,UtcToLocalPipe],
   templateUrl: './deals.html',
   styleUrl: './deals.css',
 })
@@ -89,6 +91,7 @@ editingdealId =signal <string |null>(null)
   }
 
   openEditModal(leadid: string) {
+     this.isCustomerDetailsModalOpen.set(false);
     this.editingdealId.set(leadid);
     this.isModalOpen.set(true);
   }
@@ -138,35 +141,33 @@ deleteLead(leadId: string) {
 
 
 
- 
-   isShowleadView = signal(false);
-  selectedLead = signal<PropertyDeal | null>(null);
 
-  viewLead(dealId: string) {
-      this.isShowleadView.set(true);
-    this.DealsService.getDeal(dealId).subscribe({
-      next: (res) => {
-        console.log('Fetched lead details:', res?.data);
-        this.selectedLead.set(res?.data ?? null);
-        this.isShowleadView.set(true);
-      },
-      error: (err) => {
-        console.error('Error fetching lead details:', err);
-      },
-    });
-  }
+isCustomerDetailsModalOpen = signal(false);
+selectedDeal = signal<Dealll|null>({} as Dealll)
 
-  closeLeadView() {
-    this.isShowleadView.set(false);
-    this.selectedLead.set(null);
-  }
+openCustomerDetailsModal(customerId: string){
+  this.isCustomerDetailsModalOpen.set(true);
 
-  editFromView() {
-    const lead = this.selectedLead();
-    if (!lead) return;
-    this.closeLeadView();
-    this.openEditModal(lead.id);
-  }
+ this.DealsService.getDeal(customerId).subscribe({
+   next: (res) => {
+    console.log(res);
+    
+      this.selectedDeal.set(res?.data || null);
+    },
+error: (err) => {
+  console.error('Failed to load customer details', err);
+ }
+}
+)
+
+
+}
+closeCustomerDetailsModal(){
+  this.isCustomerDetailsModalOpen.set(false);
+}
+
+
+
 
 
 

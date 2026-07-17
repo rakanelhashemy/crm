@@ -34,7 +34,7 @@
               <tbody id="deals-tbody">
    
                  @for (item of Dealslist() ; track $index) {
-                     <tr >
+                     <tr    >
       <td><div class="cell-primary">{{item.regionName}}</div><div class="cell-sub"> {{item.propertyTypeName}}</div></td>
       <td>{{item.customerName}}</td>
        <td><span class="status-pill"
@@ -48,7 +48,10 @@
       <td><div class="owner-cell"><div class="mini-avatar">{{item.agentName |nameavtar}}</div><span>{{item.agentName }}</span></div></td>
       <td>
         <div class="row-actions">
-          <button class="icon-btn" data-action="edit-deal"  title="Edit" (click)=" openEditModal(item.id)"><svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 000-1.41l-2.34-2.34a1 1 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"></path></svg></button>
+           <button class="icon-btn" data-action="view-lead"  title="View" (click)="$event.stopPropagation();openCustomerDetailsModal(item.id)  ">
+                    <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.7 7.6 1 12c1.7 4.4 6 7.5 11 7.5s9.3-3.1 11-7.5c-1.7-4.4-6-7.5-11-7.5zm0 12.5a5 5 0 110-10 5 5 0 010 10zm0-8a3 3 0 100 6 3 3 0 000-6z"></path></svg>
+                  </button>
+          <button class="icon-btn" data-action="edit-deal"  title="Edit" (click)="$event.stopPropagation(); openEditModal(item.id)"><svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 000-1.41l-2.34-2.34a1 1 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"></path></svg></button>
           <button class="icon-btn danger" data-action="delete-deal"  title="Delete"  (click)="$event.stopPropagation(); opendeleteModal(item.id)"><svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8a2 2 0 002-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></button>
         </div>
       </td>
@@ -125,4 +128,51 @@
   <component-deal-modal
    [dealID]="editingdealId()"
     (onClose)="closeModal()"></component-deal-modal>
+}
+
+@if(isCustomerDetailsModalOpen()) {
+  <div class="modal-overlay" (click)="closeCustomerDetailsModal()" id="modal-overlay">
+    <div (click)="$event.stopPropagation()" class="modal-card">
+      <div class="modal-head">
+        <h2>{{ selectedDeal()?.customerName }}</h2>
+        <button (click)="closeCustomerDetailsModal()" class="modal-close">
+          <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <span class="customer-tag" style="margin-bottom:16px;display:inline-block;">{{ selectedDeal()?.stageLabel }}</span>
+
+        <div class="detail-section">
+          <h4>Property</h4>
+          <div class="detail-row"><span class="dlabel">Region</span><span class="dval">{{ selectedDeal()?.regionName }}</span></div>
+          <div class="detail-row"><span class="dlabel">Address</span><span class="dval">{{ selectedDeal()?.addressName }}</span></div>
+          <div class="detail-row"><span class="dlabel">Unit</span><span class="dval">{{ selectedDeal()?.propertyUnit }}</span></div>
+          <div class="detail-row"><span class="dlabel">Type</span><span class="dval">{{ selectedDeal()?.propertyTypeName }}</span></div>
+          <div class="detail-row"><span class="dlabel">Developer</span><span class="dval">{{ selectedDeal()?.developerCompany || '–' }}</span></div>
+        </div>
+
+        <div class="detail-section">
+          <h4>Deal</h4>
+          <div class="detail-row"><span class="dlabel">Agent</span><span class="dval">{{ selectedDeal()?.agentName }}</span></div>
+          <div class="detail-row"><span class="dlabel">Value</span><span class="dval">{{ selectedDeal()?.value | shortCurrencyPipe }}</span></div>
+          <div class="detail-row"><span class="dlabel">Commission %</span><span class="dval">{{ selectedDeal()?.commissionPct }}%</span></div>
+          <div class="detail-row"><span class="dlabel">Expected Commission %</span><span class="dval">{{ selectedDeal()?.commissionPct }}%</span></div>
+          <div class="detail-row"><span class="dlabel">Actual Commission</span><span class="dval">{{ selectedDeal()?.actualCommissionValue | shortCurrencyPipe }}</span></div>
+          <div class="detail-row"><span class="dlabel">Projected</span><span class="dval">{{ selectedDeal()?.isCommissionProjected ? 'Yes' : 'No' }}</span></div>
+        </div>
+
+        <div class="detail-section">
+          <h4>Audit</h4>
+          <div class="detail-row"><span class="dlabel">Created By</span><span class="dval">{{ selectedDeal()?.createdByName || '–' }}</span></div>
+          <div class="detail-row"><span class="dlabel">Created At</span><span class="dval">{{ (selectedDeal()?.createdAt | utcToLocal) || '–' }}</span></div>
+          <div class="detail-row"><span class="dlabel">Updated By</span><span class="dval">{{ selectedDeal()?.updatedByName || '–' }}</span></div>
+          <div class="detail-row"><span class="dlabel">Updated At</span><span class="dval">{{ (selectedDeal()?.updatedAt | utcToLocal) || '–' }}</span></div>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-ghost" (click)="closeCustomerDetailsModal()" id="cd-close">Close</button>
+        <button class="btn btn-primary" id="cd-edit" (click)="openEditModal(selectedDeal()?.id!)">Edit Customer</button>
+      </div>
+    </div>
+  </div>
 }
