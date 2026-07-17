@@ -217,7 +217,7 @@ export class NotificationService {
       toast.onTap.subscribe(() => {
         this.markOneAsRead(notification);
         if (notification.taskItemId) {
-          this.router.navigate(['/tasks', notification.taskItemId]);
+          this.router.navigate(['/tasks']);
         }
         this.notificationsOpen.set(false);
       });

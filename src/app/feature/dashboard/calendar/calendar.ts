@@ -24,6 +24,7 @@ export class Calendar implements OnInit{
     const wasConnected = localStorage.getItem('gcal_connected') === 'true';
     this.connected.set(wasConnected);
     this.getMyusersService()
+    this.getstatus()
   }
 
   connect() {
@@ -58,5 +59,14 @@ export class Calendar implements OnInit{
         this.name.set(res.data.fullName)
       }
     })
+  }
+
+    getstatus() {
+    this.googleAuth.getStatus().subscribe({
+      next: (res) => {
+        console.log( "status", res);
+
+      }
+    });
   }
 }
