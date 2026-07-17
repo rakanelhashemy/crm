@@ -21,8 +21,7 @@ export class Calendar implements OnInit{
   connected = signal(false);
 
   ngOnInit(): void {
-    const wasConnected = localStorage.getItem('gcal_connected') === 'true';
-    this.connected.set(wasConnected);
+
     this.getMyusersService()
     this.getstatus()
   }
@@ -30,8 +29,6 @@ export class Calendar implements OnInit{
   connect() {
     this.googleAuth.authgoogle().subscribe({
       next: (res) => {
-        console.log(res);
-        localStorage.setItem('gcal_connected', 'true'); // نحفظ العلامة قبل الخروج من الصفحة
         window.location.href = res.data;
       }
     });
@@ -39,11 +36,8 @@ export class Calendar implements OnInit{
 
   disconnect() {
     this.connected.set(false);
-    localStorage.removeItem('gcal_connected');
     this.googleAuth.revoke().subscribe({
       next: (res) => {
-        console.log(res);
-        this.connected.set(false);
       }
     });
   }
@@ -64,8 +58,8 @@ export class Calendar implements OnInit{
     getstatus() {
     this.googleAuth.getStatus().subscribe({
       next: (res) => {
-        console.log( "status", res);
-
+ 
+this.connected.set(res.data)
       }
     });
   }
